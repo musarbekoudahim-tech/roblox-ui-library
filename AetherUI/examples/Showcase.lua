@@ -5,6 +5,8 @@
 	A complete tour of every AetherUI component, wired into a single window
 	with a sidebar. Drop this in a LocalScript under StarterPlayerScripts
 	(with AetherUI placed in ReplicatedStorage) and hit Play.
+
+	Press RightShift to toggle the window, Ctrl+K for the command palette.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -16,45 +18,39 @@ local AetherUI = require(ReplicatedStorage:WaitForChild("AetherUI"):WaitForChild
 AetherUI.Theme.Apply("Dark") -- "Dark" | "Light" | "Amoled" | "Aurora"
 AetherUI.Sound.SetEnabled(true)
 
--- Global keybinds
-AetherUI.Keybinds.Register("toggle-ui", {
-	Key = Enum.KeyCode.RightShift,
-	Callback = function()
-		print("[Showcase] Toggle UI")
-	end,
-})
-
 -- 2. Window -------------------------------------------------------------------
 
 local window = AetherUI.Window({
 	Title = "AetherUI Showcase",
 	Subtitle = "v" .. AetherUI.Version,
 	Icon = "sparkles",
-	Size = UDim2.fromOffset(860, 560),
-	Draggable = true,
+	Size = UDim2.fromOffset(880, 560),
+	ToggleKey = Enum.KeyCode.RightShift,
 	Resizable = true,
 })
 
--- 3. Sidebar navigation ---------------------------------------------------------
+-- 3. Sidebar navigation --------------------------------------------------------
 
-local pages = {} :: { [string]: Frame }
+local pages = {} :: { [string]: ScrollingFrame }
 
-local function makePage(name: string): Frame
+local function makePage(name: string): ScrollingFrame
 	local page = AetherUI.ScrollFrame({
-		Size = UDim2.new(1, 0, 1, 0),
+		Size = UDim2.new(1, -220, 1, 0),
+		Position = UDim2.new(0, 220, 0, 0),
 		Padding = 20,
-		Gap = 14,
-		Visible = false,
+		ListPadding = 14,
 		Parent = window.Content,
 	})
+	page.Visible = false
 	pages[name] = page
 	return page
 end
 
-local sidebar = AetherUI.Sidebar({
+AetherUI.Sidebar({
 	Title = "Aether",
 	Collapsible = true,
 	Default = "inputs",
+	Size = UDim2.new(0, 210, 1, 0),
 	Items = {
 		{ Id = "inputs", Label = "Inputs", Icon = "text-cursor-input" },
 		{ Id = "selection", Label = "Selection", Icon = "list-checks" },
@@ -70,23 +66,26 @@ local sidebar = AetherUI.Sidebar({
 	Parent = window.Content,
 })
 
--- 4. Inputs page -----------------------------------------------------------------
+-- 4. Inputs page ----------------------------------------------------------------
 
 local inputsPage = makePage("inputs")
 inputsPage.Visible = true
+
+local username = AetherUI.Value("")
 
 AetherUI.FormField({
 	Label = "Username",
 	HelperText = "3-16 characters, letters and numbers only.",
 	Required = true,
-	Input = AetherUI.TextInput({
+	Content = AetherUI.TextInput({
+		Value = username,
 		Placeholder = "Enter username...",
 		Icon = "user",
-		Clearable = true,
+		ClearButton = true,
 		MaxLength = 16,
 		ShowCounter = true,
 		Validate = function(text: string): (boolean, string?)
-			if #text < 3 then
+			if #text > 0 and #text < 3 then
 				return false, "Too short"
 			end
 			return true
@@ -97,7 +96,7 @@ AetherUI.FormField({
 
 AetherUI.FormField({
 	Label = "Password",
-	Input = AetherUI.TextInput({
+	Content = AetherUI.TextInput({
 		Placeholder = "Enter password...",
 		Icon = "lock",
 		Password = true,
@@ -105,153 +104,228 @@ AetherUI.FormField({
 	Parent = inputsPage,
 })
 
-AetherUI.TextArea({
+local bioField = AetherUI.TextArea({
 	Placeholder = "Write a bio...",
 	MaxLength = 200,
 	ShowCounter = true,
 	Rows = 4,
-	Parent = inputsPage,
 })
+bioField.Parent = inputsPage
 
-AetherUI.Slider({
+local volume = AetherUI.Value(60)
+local volumeSlider = AetherUI.Slider({
 	Label = "Volume",
 	Min = 0,
 	Max = 100,
 	Step = 1,
-	Value = 60,
-	Suffix = "%",
-	ShowTooltip = true,
-	OnChange = function(v: number)
+	Value = volume,
+	ShowValue = true,
+	Format = function(v: number): string
+		return ("%d%%"):format(v)
+	end,
+	OnChanged = function(v: number)
 		print("[Showcase] Volume:", v)
 	end,
-	Parent = inputsPage,
 })
+volumeSlider.Parent = inputsPage
 
-AetherUI.Slider({
+local priceRange = AetherUI.Value({ 50, 320 })
+local rangeSlider = AetherUI.Slider({
 	Label = "Price range",
-	Range = true,
 	Min = 0,
 	Max = 500,
-	Value = { 50, 320 },
-	Prefix = "$",
-	Parent = inputsPage,
+	RangeValue = priceRange,
+	ShowValue = true,
+	Format = function(v: number): string
+		return ("$%d"):format(v)
+	end,
 })
+rangeSlider.Parent = inputsPage
 
-AetherUI.ColorPicker({
+AetherUI.FormField({
 	Label = "Accent color",
-	Value = Color3.fromRGB(94, 106, 255),
-	Presets = {
-		Color3.fromRGB(94, 106, 255),
-		Color3.fromRGB(16, 185, 129),
-		Color3.fromRGB(244, 63, 94),
-		Color3.fromRGB(245, 158, 11),
-	},
-	OnChange = function(color: Color3)
-		print("[Showcase] Color:", color)
-	end,
+	Content = AetherUI.ColorPicker({
+		Value = Color3.fromRGB(94, 106, 255),
+		Presets = {
+			Color3.fromRGB(94, 106, 255),
+			Color3.fromRGB(16, 185, 129),
+			Color3.fromRGB(244, 63, 94),
+			Color3.fromRGB(245, 158, 11),
+		},
+		OnChanged = function(color: Color3)
+			print("[Showcase] Color:", color)
+		end,
+	}),
 	Parent = inputsPage,
 })
 
-AetherUI.KeybindInput({
-	Label = "Open menu",
-	Default = Enum.KeyCode.M,
-	OnChange = function(bind)
-		print("[Showcase] Rebound to", bind.Key.Name)
-	end,
+AetherUI.FormField({
+	Label = "Open menu key",
+	Content = AetherUI.KeybindInput({
+		Keybind = { Key = Enum.KeyCode.M },
+		AllowModifiers = true,
+		OnChanged = function(bind)
+			print("[Showcase] Rebound to", AetherUI.Keybinds.format(bind))
+		end,
+	}),
 	Parent = inputsPage,
 })
 
--- 5. Selection page ------------------------------------------------------------
+-- 5. Selection page --------------------------------------------------------------
 
 local selectionPage = makePage("selection")
 
-AetherUI.Dropdown({
+local region = AetherUI.Value("eu")
+AetherUI.FormField({
 	Label = "Region",
-	Options = { "North America", "Europe", "Asia Pacific", "South America" },
-	Value = "Europe",
-	Searchable = true,
+	Content = AetherUI.Dropdown({
+		Items = {
+			{ Label = "North America", Value = "na" },
+			{ Label = "Europe", Value = "eu" },
+			{ Label = "Asia Pacific", Value = "apac" },
+			{ Label = "South America", Value = "sa" },
+		},
+		Value = region,
+		Searchable = true,
+		FullWidth = true,
+	}),
 	Parent = selectionPage,
 })
 
-AetherUI.MultiSelect({
+local tags = AetherUI.Value({ "pvp", "sim" })
+AetherUI.FormField({
 	Label = "Tags",
-	Options = { "PvP", "Roleplay", "Simulator", "Obby", "Tycoon", "Horror" },
-	Value = { "PvP", "Simulator" },
-	MaxChips = 4,
+	Content = AetherUI.MultiSelect({
+		Items = {
+			{ Label = "PvP", Value = "pvp" },
+			{ Label = "Roleplay", Value = "rp" },
+			{ Label = "Simulator", Value = "sim" },
+			{ Label = "Obby", Value = "obby" },
+			{ Label = "Tycoon", Value = "tycoon" },
+			{ Label = "Horror", Value = "horror" },
+		},
+		Values = tags,
+		Placeholder = "Pick tags...",
+		MaxVisibleChips = 4,
+	}),
 	Parent = selectionPage,
 })
 
-AetherUI.Checkbox({
+local notifications = AetherUI.Value(true)
+local notifyBox = AetherUI.Checkbox({
 	Label = "Enable notifications",
-	Checked = true,
-	Parent = selectionPage,
+	Value = notifications,
 })
+notifyBox.Parent = selectionPage
 
-AetherUI.Toggle({
+local darkMode = AetherUI.Value(true)
+local darkToggle = AetherUI.Toggle({
 	Label = "Dark mode",
 	Description = "Switch between light and dark themes.",
-	On = true,
-	OnChange = function(on: boolean)
+	Value = darkMode,
+	OnChanged = function(on: boolean)
 		AetherUI.Theme.Apply(if on then "Dark" else "Light")
 	end,
-	Parent = selectionPage,
 })
+darkToggle.Parent = selectionPage
 
-AetherUI.RadioGroup({
-	Label = "Quality",
-	Options = { "Low", "Medium", "High", "Ultra" },
-	Value = "High",
-	Parent = selectionPage,
+local quality = AetherUI.Value("high")
+local qualityRadios = AetherUI.RadioGroup({
+	Items = {
+		{ Label = "Low", Value = "low" },
+		{ Label = "Medium", Value = "medium" },
+		{ Label = "High", Value = "high" },
+		{ Label = "Ultra", Value = "ultra", Description = "Requires a beefy device." },
+	},
+	Value = quality,
 })
+qualityRadios.Parent = selectionPage
 
-AetherUI.DatePicker({
+AetherUI.FormField({
 	Label = "Event date",
+	Content = AetherUI.DatePicker({
+		OnChanged = function(date)
+			print(("[Showcase] Date: %d-%02d-%02d"):format(date.Year, date.Month, date.Day))
+		end,
+	}),
 	Parent = selectionPage,
 })
 
-AetherUI.TimePicker({
+AetherUI.FormField({
 	Label = "Start time",
-	Use24Hour = false,
+	Content = AetherUI.TimePicker({
+		Use24Hour = false,
+		MinuteStep = 5,
+	}),
 	Parent = selectionPage,
 })
 
--- 6. Display page ------------------------------------------------------------------
+-- 6. Display page -----------------------------------------------------------------
 
 local displayPage = makePage("display")
 
-local card = AetherUI.Card({
+AetherUI.Card({
 	Title = "Server Status",
-	Subtitle = "Updated 2 minutes ago",
+	Description = "Updated 2 minutes ago",
 	Icon = "activity",
 	Parent = displayPage,
+	Children = {
+		AetherUI.Badge({ Text = "Online", Variant = "Success", Dot = true }),
+		AetherUI.Badge({ Text = "v2.4.1", Variant = "Outline" }),
+		AetherUI.ProgressBar({ Value = 0.72, ShowLabel = true }),
+		AetherUI.CircularProgress({ Value = 0.45, Diameter = 64, ShowLabel = true }),
+	},
 })
 
-AetherUI.Badge({ Text = "Online", Variant = "Success", Dot = true, Parent = card.Content })
-AetherUI.Badge({ Text = "v2.4.1", Variant = "Outline", Parent = card.Content })
-AetherUI.ProgressBar({ Value = 0.72, Label = "CPU", ShowPercent = true, Parent = card.Content })
-AetherUI.CircularProgress({ Value = 0.45, Size = 64, Label = "Memory", Parent = card.Content })
-
-AetherUI.Avatar({
-	UserId = 1,
+local avatar = AetherUI.Avatar({
+	Name = "builderman",
 	Size = 48,
 	Status = "Online",
-	Parent = displayPage,
+	Ring = true,
 })
+avatar.Parent = displayPage
+
+local status = AetherUI.StatusIndicator({
+	Status = "Busy",
+	Label = "In a match",
+	Pulse = true,
+})
+status.Parent = displayPage
 
 AetherUI.Separator({ Label = "Details", Parent = displayPage })
 
 AetherUI.Accordion({
 	Items = {
-		{ Title = "What is AetherUI?", Body = "A premium Fusion-based UI library for Roblox." },
-		{ Title = "Is it free?", Body = "Yes - MIT licensed, forever." },
-		{ Title = "Does it support themes?", Body = "Dark, Light, Amoled, Aurora and unlimited custom themes." },
+		{
+			Id = "what",
+			Title = "What is AetherUI?",
+			Content = function()
+				return AetherUI.HelperText({ Text = "A premium Fusion-based UI library for Roblox." })
+			end,
+		},
+		{
+			Id = "free",
+			Title = "Is it free?",
+			Content = function()
+				return AetherUI.HelperText({ Text = "Yes - MIT licensed, forever." })
+			end,
+			DefaultOpen = true,
+		},
+		{
+			Id = "themes",
+			Title = "Does it support themes?",
+			Content = function()
+				return AetherUI.HelperText({ Text = "Dark, Light, Amoled, Aurora and unlimited custom themes." })
+			end,
+		},
 	},
 	Multiple = false,
 	Parent = displayPage,
 })
 
 AetherUI.Tabs({
-	Variant = "Pill",
+	Variant = "pill",
+	Default = "overview",
 	Tabs = {
 		{ Id = "overview", Label = "Overview", Icon = "home" },
 		{ Id = "stats", Label = "Stats", Icon = "bar-chart" },
@@ -261,12 +335,19 @@ AetherUI.Tabs({
 })
 
 AetherUI.Stepper({
-	Steps = { "Account", "Profile", "Preferences", "Done" },
-	Current = 2,
+	Steps = {
+		{ Title = "Account", Icon = "user" },
+		{ Title = "Profile", Icon = "id-card" },
+		{ Title = "Preferences", Icon = "sliders-horizontal" },
+		{ Title = "Done", Icon = "check" },
+	},
+	OnFinish = function()
+		AetherUI.Toast.Success("Setup complete!")
+	end,
 	Parent = displayPage,
 })
 
-AetherUI.Skeleton({ Lines = 3, Avatar = true, Parent = displayPage })
+AetherUI.Skeleton({ Lines = 3, Parent = displayPage })
 
 AetherUI.EmptyState({
 	Icon = "inbox",
@@ -279,11 +360,11 @@ AetherUI.EmptyState({
 	Parent = displayPage,
 })
 
--- 7. Overlays page -----------------------------------------------------------------
+-- 7. Overlays page ----------------------------------------------------------------
 
 local overlaysPage = makePage("overlays")
 
-AetherUI.Button({
+local modalButton = AetherUI.Button({
 	Text = "Open Modal",
 	Icon = "app-window",
 	Variant = "Primary",
@@ -291,18 +372,27 @@ AetherUI.Button({
 		AetherUI.Modal({
 			Title = "Confirm action",
 			Description = "Are you sure you want to reset all settings? This cannot be undone.",
-			Variant = "Destructive",
-			ConfirmText = "Reset",
-			CancelText = "Cancel",
-			OnConfirm = function()
-				AetherUI.Toast.Success("Settings reset", { Description = "All settings restored to defaults." })
-			end,
+			Icon = "triangle-alert",
+			Variant = "danger",
+			Actions = {
+				{ Label = "Cancel", Variant = "Ghost", CloseOnClick = true },
+				{
+					Label = "Reset",
+					Variant = "Destructive",
+					CloseOnClick = true,
+					OnClick = function()
+						AetherUI.Toast.Success("Settings reset", {
+							Description = "All settings restored to defaults.",
+						})
+					end,
+				},
+			},
 		})
 	end,
-	Parent = overlaysPage,
 })
+modalButton.Parent = overlaysPage
 
-AetherUI.Button({
+local toastButton = AetherUI.Button({
 	Text = "Show Toasts",
 	Icon = "bell",
 	Variant = "Secondary",
@@ -313,19 +403,25 @@ AetherUI.Button({
 		task.wait(0.25)
 		AetherUI.Toast.Error("Connection lost", {
 			Description = "Retrying in 5 seconds...",
-			Action = { Text = "Retry now", OnClick = function() print("retry") end },
+			Action = {
+				Label = "Retry now",
+				OnClick = function()
+					print("[Showcase] Retry")
+				end,
+			},
 		})
 	end,
-	Parent = overlaysPage,
 })
+toastButton.Parent = overlaysPage
 
 local tooltipTarget = AetherUI.Button({
 	Text = "Hover me",
 	Variant = "Outline",
-	Parent = overlaysPage,
 })
+tooltipTarget.Parent = overlaysPage
 AetherUI.Tooltip.Attach(tooltipTarget, {
-	Text = "Rich tooltips with delay",
+	Title = "Rich tooltip",
+	Text = "Tooltips support titles, shortcuts and custom delays.",
 	Shortcut = "Ctrl+H",
 	Delay = 0.4,
 })
@@ -333,44 +429,60 @@ AetherUI.Tooltip.Attach(tooltipTarget, {
 local contextTarget = AetherUI.Button({
 	Text = "Right-click me",
 	Variant = "Ghost",
-	Parent = overlaysPage,
 })
+contextTarget.Parent = overlaysPage
 AetherUI.ContextMenu.Attach(contextTarget, {
-	Items = {
-		{ Label = "Copy", Icon = "copy", Shortcut = "Ctrl+C" },
-		{ Label = "Paste", Icon = "clipboard", Shortcut = "Ctrl+V" },
-		{ Kind = "Separator" },
-		{ Label = "Delete", Icon = "trash-2", Destructive = true },
-	},
+	{ Label = "Copy", Icon = "copy", Shortcut = "Ctrl+C" },
+	{ Label = "Paste", Icon = "clipboard", Shortcut = "Ctrl+V" },
+	{ Separator = true },
+	{ Label = "Delete", Icon = "trash-2", Destructive = true },
 })
 
 -- Command palette: fuzzy search across registered commands, Ctrl+K to toggle.
 local palette = AetherUI.CommandPalette({
 	Hotkey = Enum.KeyCode.K, -- Ctrl+K (default)
 	Commands = {
-		{ Id = "theme-dark", Label = "Theme: Dark", Icon = "moon", Group = "Appearance", Run = function()
-			AetherUI.Theme.Apply("Dark")
-		end },
-		{ Id = "theme-light", Label = "Theme: Light", Icon = "sun", Group = "Appearance", Run = function()
-			AetherUI.Theme.Apply("Light")
-		end },
-		{ Id = "toast-hello", Label = "Say hello", Icon = "hand", Group = "Fun", Run = function()
-			AetherUI.Toast.Info("Hello from the palette!")
-		end },
+		{
+			Id = "theme-dark",
+			Label = "Theme: Dark",
+			Icon = "moon",
+			Group = "Appearance",
+			Run = function()
+				AetherUI.Theme.Apply("Dark")
+			end,
+		},
+		{
+			Id = "theme-light",
+			Label = "Theme: Light",
+			Icon = "sun",
+			Group = "Appearance",
+			Run = function()
+				AetherUI.Theme.Apply("Light")
+			end,
+		},
+		{
+			Id = "toast-hello",
+			Label = "Say hello",
+			Icon = "hand",
+			Group = "Fun",
+			Run = function()
+				AetherUI.Toast.Info("Hello from the palette!")
+			end,
+		},
 	},
 })
 
-AetherUI.Button({
+local paletteButton = AetherUI.Button({
 	Text = "Command Palette (Ctrl+K)",
 	Icon = "command",
 	Variant = "Outline",
 	OnClick = function()
 		palette.Open()
 	end,
-	Parent = overlaysPage,
 })
+paletteButton.Parent = overlaysPage
 
--- 8. Data page ----------------------------------------------------------------------
+-- 8. Data page --------------------------------------------------------------------
 
 local dataPage = makePage("data")
 
@@ -386,7 +498,7 @@ AetherUI.Breadcrumbs({
 AetherUI.DataTable({
 	Columns = {
 		{ Key = "name", Label = "Player", Sortable = true },
-		{ Key = "score", Label = "Score", Sortable = true, Align = "Right" },
+		{ Key = "score", Label = "Score", Sortable = true },
 		{ Key = "status", Label = "Status" },
 	},
 	Rows = {
@@ -404,19 +516,29 @@ AetherUI.DataTable({
 AetherUI.TreeView({
 	Nodes = {
 		{
+			Id = "src",
 			Label = "src",
 			Icon = "folder",
 			Children = {
-				{ Label = "Core", Icon = "folder", Children = {
-					{ Label = "Theme.lua", Icon = "file" },
-					{ Label = "Icons.lua", Icon = "file" },
-				} },
-				{ Label = "Init.lua", Icon = "file" },
+				{
+					Id = "core",
+					Label = "Core",
+					Icon = "folder",
+					Children = {
+						{ Id = "theme", Label = "Theme.lua", Icon = "file" },
+						{ Id = "icons", Label = "Icons.lua", Icon = "file" },
+					},
+				},
+				{ Id = "init", Label = "Init.lua", Icon = "file" },
 			},
 		},
-		{ Label = "README.md", Icon = "file-text" },
+		{ Id = "readme", Label = "README.md", Icon = "file-text" },
 	},
+	DefaultExpanded = { "src" },
+	OnSelect = function(node)
+		print("[Showcase] Selected:", node.Label)
+	end,
 	Parent = dataPage,
 })
 
-print("[Showcase] AetherUI showcase loaded. Press Ctrl+K for the command palette.")
+print("[Showcase] AetherUI loaded. RightShift toggles the window, Ctrl+K opens the palette.")

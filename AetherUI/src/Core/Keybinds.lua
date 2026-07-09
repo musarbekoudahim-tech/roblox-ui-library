@@ -101,6 +101,17 @@ function Keybinds.Unregister(id: string)
 	registry[id] = nil
 end
 
+--- Changes the key (and optionally modifiers) of an existing bind in place.
+function Keybinds.Rebind(id: string, key: Enum.KeyCode, modifiers: { string }?)
+	local handle = registry[id]
+	if handle then
+		handle.Spec.Key = key
+		if modifiers ~= nil then
+			handle.Spec.Modifiers = modifiers
+		end
+	end
+end
+
 function Keybinds.GetAll(): { [string]: KeybindSpec }
 	local out = {}
 	for id, handle in registry do

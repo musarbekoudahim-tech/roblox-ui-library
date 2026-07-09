@@ -79,7 +79,8 @@ local window = AetherUI.Window({
 	Title = "My App",
 	Icon = "sparkles",
 	Size = UDim2.fromOffset(720, 480),
-	Draggable = true,
+	ToggleKey = Enum.KeyCode.RightShift, -- optional show/hide hotkey
+	Resizable = true,
 })
 
 -- Add components
@@ -156,7 +157,7 @@ AetherUI.FormField({
 	Label = "Email",
 	HelperText = "We never share your email.",
 	Required = true,
-	Input = AetherUI.TextInput({
+	Content = AetherUI.TextInput({
 		Placeholder = "you@example.com",
 		Icon = "mail",
 		Validate = function(text)
@@ -176,7 +177,9 @@ AetherUI.FormField({
 AetherUI.DataTable({
 	Columns = {
 		{ Key = "name", Label = "Name", Sortable = true },
-		{ Key = "score", Label = "Score", Sortable = true, Align = "Right" },
+		{ Key = "score", Label = "Score", Sortable = true, Format = function(v)
+			return tostring(v)
+		end },
 	},
 	Rows = playerData,
 	PageSize = 10,
@@ -235,11 +238,13 @@ AetherUI.Keybinds.Register("open-menu", {
 	Callback = function() menu:Toggle() end,
 })
 
--- Rebindable in UI
+-- Rebindable in UI (wrap in FormField for a label)
 AetherUI.KeybindInput({
-	Label = "Open menu",
-	Default = Enum.KeyCode.M,
-	OnChange = function(bind) print("Rebound to", bind.Key.Name) end,
+	Keybind = { Key = Enum.KeyCode.M, Ctrl = true },
+	AllowModifiers = true,
+	OnChanged = function(bind)
+		print("Rebound to", AetherUI.Keybinds.format(bind))
+	end,
 	Parent = settingsPage,
 })
 
