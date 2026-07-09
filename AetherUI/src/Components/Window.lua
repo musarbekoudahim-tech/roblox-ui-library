@@ -144,7 +144,7 @@ local function Window(props: WindowProps): WindowHandle
 				Size = UDim2.fromOffset(16, 16),
 				LayoutOrder = 2,
 				Color = Computed(function()
-					return Fusion.peek(theme).Primary
+					return theme:get().Primary
 				end),
 			}) or nil,
 			New("TextLabel")({
@@ -154,7 +154,7 @@ local function Window(props: WindowProps): WindowHandle
 				Font = Enum.Font.GothamBold,
 				TextSize = 14,
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).Text
+					return theme:get().Text
 				end),
 				LayoutOrder = 3,
 			}),
@@ -165,7 +165,7 @@ local function Window(props: WindowProps): WindowHandle
 				Font = Enum.Font.Gotham,
 				TextSize = 12,
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).TextMuted
+					return theme:get().TextMuted
 				end),
 				LayoutOrder = 4,
 			}) or nil,
@@ -200,7 +200,7 @@ local function Window(props: WindowProps): WindowHandle
 				Position = UDim2.fromScale(0.5, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Color = Computed(function()
-					return Fusion.peek(theme).TextDisabled
+					return theme:get().TextDisabled
 				end),
 			}),
 		},
@@ -230,7 +230,7 @@ local function Window(props: WindowProps): WindowHandle
 		end), 24, 0.85),
 		Size = Spring(size, 30, 1),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Background
+			return theme:get().Background
 		end),
 		BackgroundTransparency = Spring(Computed(function()
 			return Fusion.peek(visible) and 0 or 1
@@ -241,11 +241,11 @@ local function Window(props: WindowProps): WindowHandle
 		Parent = layer,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusLg)
+				return UDim.new(0, theme:get().RadiusLg)
 			end) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),

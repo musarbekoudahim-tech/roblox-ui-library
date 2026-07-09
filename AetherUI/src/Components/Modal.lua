@@ -136,7 +136,7 @@ local function Modal(props: ModalProps): ModalHandle
 			Size = UDim2.fromOffset(34, 34),
 			LayoutOrder = 1,
 			BackgroundColor3 = Computed(function()
-				local t = Fusion.peek(theme)
+				local t = theme:get()
 				if props.Variant == "danger" then
 					return t.Danger
 				elseif props.Variant == "success" then
@@ -152,7 +152,7 @@ local function Modal(props: ModalProps): ModalHandle
 					Position = UDim2.fromScale(0.5, 0.5),
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Color = Computed(function()
-						local t = Fusion.peek(theme)
+						local t = theme:get()
 						if props.Variant == "danger" then
 							return t.Danger
 						elseif props.Variant == "success" then
@@ -178,7 +178,7 @@ local function Modal(props: ModalProps): ModalHandle
 				Font = Enum.Font.GothamBold,
 				TextSize = 15,
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).Text
+					return theme:get().Text
 				end),
 				TextXAlignment = Enum.TextXAlignment.Left,
 			}),
@@ -189,7 +189,7 @@ local function Modal(props: ModalProps): ModalHandle
 				Font = Enum.Font.Gotham,
 				TextSize = 12,
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).TextMuted
+					return theme:get().TextMuted
 				end),
 				TextXAlignment = Enum.TextXAlignment.Left,
 				TextWrapped = true,
@@ -276,7 +276,7 @@ local function Modal(props: ModalProps): ModalHandle
 		Size = props.Size or UDim2.fromOffset(420, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Surface
+			return theme:get().Surface
 		end),
 		BackgroundTransparency = Spring(Computed(function()
 			return Fusion.peek(visible) and 0 or 1
@@ -284,11 +284,11 @@ local function Modal(props: ModalProps): ModalHandle
 		ZIndex = 102,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusLg)
+				return UDim.new(0, theme:get().RadiusLg)
 			end) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 				Transparency = Spring(Computed(function()

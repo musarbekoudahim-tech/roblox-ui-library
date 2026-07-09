@@ -44,6 +44,7 @@ return function(props: { [string]: any }): TextButton
 
 	return New("TextButton")({
 		Name = "AetherToggle",
+		Parent = props.Parent,
 		Text = "",
 		AutoButtonColor = false,
 		BackgroundTransparency = 1,

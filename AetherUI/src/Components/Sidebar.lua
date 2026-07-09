@@ -77,7 +77,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 				Font = Enum.Font.GothamBold,
 				TextSize = 10,
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).TextMuted
+					return theme:get().TextMuted
 				end),
 				TextXAlignment = Enum.TextXAlignment.Left,
 				TextTransparency = Spring(Computed(function()
@@ -103,7 +103,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 			AutoButtonColor = false,
 			LayoutOrder = order,
 			BackgroundColor3 = Computed(function()
-				local t = Fusion.peek(theme)
+				local t = theme:get()
 				return Fusion.peek(isActive) and t.Primary or t.SurfaceHigh
 			end),
 			BackgroundTransparency = Spring(Computed(function()
@@ -124,7 +124,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 			end,
 			[Children] = {
 				New("UICorner")({ CornerRadius = Computed(function()
-					return UDim.new(0, Fusion.peek(theme).RadiusSm)
+					return UDim.new(0, theme:get().RadiusSm)
 				end) }),
 				-- Active indicator pill
 				New("Frame")({
@@ -134,7 +134,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 						return Fusion.peek(isActive) and UDim2.fromOffset(3, 18) or UDim2.fromOffset(3, 0)
 					end), 30, 1),
 					BackgroundColor3 = Computed(function()
-						return Fusion.peek(theme).Primary
+						return theme:get().Primary
 					end),
 					BorderSizePixel = 0,
 					[Children] = { New("UICorner")({ CornerRadius = UDim.new(1, 0) }) },
@@ -144,7 +144,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 					Position = UDim2.new(0, 12, 0.5, 0),
 					AnchorPoint = Vector2.new(0, 0.5),
 					Color = Computed(function()
-						local t = Fusion.peek(theme)
+						local t = theme:get()
 						return Fusion.peek(isActive) and t.Primary or t.TextMuted
 					end),
 				}),
@@ -156,7 +156,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 					Font = Enum.Font.GothamMedium,
 					TextSize = 13,
 					TextColor3 = Computed(function()
-						local t = Fusion.peek(theme)
+						local t = theme:get()
 						return Fusion.peek(isActive) and t.Text or t.TextMuted
 					end),
 					TextXAlignment = Enum.TextXAlignment.Left,
@@ -170,13 +170,13 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 					Position = UDim2.new(1, -10, 0.5, 0),
 					AutomaticSize = Enum.AutomaticSize.XY,
 					BackgroundColor3 = Computed(function()
-						return Fusion.peek(theme).Primary
+						return theme:get().Primary
 					end),
 					Text = item.Badge,
 					Font = Enum.Font.GothamBold,
 					TextSize = 10,
 					TextColor3 = Computed(function()
-						return Fusion.peek(theme).PrimaryText
+						return theme:get().PrimaryText
 					end),
 					TextTransparency = Spring(Computed(function()
 						return Fusion.peek(collapsed) and 1 or 0
@@ -208,7 +208,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 			Font = Enum.Font.GothamBold,
 			TextSize = 15,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).Text
+				return theme:get().Text
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextTransparency = Spring(Computed(function()
@@ -235,7 +235,7 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 					Position = UDim2.fromScale(0.5, 0.5),
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Color = Computed(function()
-						return Fusion.peek(theme).TextMuted
+						return theme:get().TextMuted
 					end),
 				}),
 			},
@@ -250,19 +250,19 @@ local function Sidebar(props: SidebarProps): SidebarHandle
 			return UDim2.new(0, width, base.Y.Scale, base.Y.Offset)
 		end), 26, 1),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Surface
+			return theme:get().Surface
 		end),
 		Parent = props.Parent,
 		ClipsDescendants = true,
 		[Children] = {
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusMd)
+				return UDim.new(0, theme:get().RadiusMd)
 			end) }),
 			New("Frame")({
 				Name = "Header",

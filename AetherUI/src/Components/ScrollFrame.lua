@@ -60,7 +60,7 @@ local function ScrollFrame(props: ScrollFrameProps): ScrollingFrame
 		BorderSizePixel = 0,
 		ScrollBarThickness = 4,
 		ScrollBarImageColor3 = Computed(function()
-			return Fusion.peek(theme).Border
+			return theme:get().Border
 		end),
 		ScrollBarImageTransparency = 0.2,
 		ScrollingDirection = props.Horizontal and Enum.ScrollingDirection.X or Enum.ScrollingDirection.Y,

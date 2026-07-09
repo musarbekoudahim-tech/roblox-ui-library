@@ -105,7 +105,7 @@ local function Tabs(props: TabsProps): Frame
 				Size = UDim2.fromOffset(15, 15),
 				LayoutOrder = 1,
 				Color = Computed(function()
-					local t = Fusion.peek(theme)
+					local t = theme:get()
 					if tab.Disabled then
 						return t.TextDisabled
 					end
@@ -123,7 +123,7 @@ local function Tabs(props: TabsProps): Frame
 			TextSize = 13,
 			LayoutOrder = 2,
 			TextColor3 = Spring(Computed(function()
-				local t = Fusion.peek(theme)
+				local t = theme:get()
 				if tab.Disabled then
 					return t.TextDisabled
 				end
@@ -142,7 +142,7 @@ local function Tabs(props: TabsProps): Frame
 			AutoButtonColor = false,
 			LayoutOrder = i,
 			BackgroundColor3 = Computed(function()
-				return Fusion.peek(theme).SurfaceHigh
+				return theme:get().SurfaceHigh
 			end),
 			BackgroundTransparency = Spring(Computed(function()
 				if variant == "underline" then
@@ -171,7 +171,7 @@ local function Tabs(props: TabsProps): Frame
 			end,
 			[Children] = {
 				New("UICorner")({ CornerRadius = Computed(function()
-					return UDim.new(0, Fusion.peek(theme).RadiusSm)
+					return UDim.new(0, theme:get().RadiusSm)
 				end) }),
 				New("Frame")({
 					Size = UDim2.fromScale(1, 1),
@@ -197,7 +197,7 @@ local function Tabs(props: TabsProps): Frame
 			end), 30, 1),
 			Size = Spring(indicatorSize, 30, 1),
 			BackgroundColor3 = Computed(function()
-				return Fusion.peek(theme).Primary
+				return theme:get().Primary
 			end),
 			BorderSizePixel = 0,
 			ZIndex = 2,

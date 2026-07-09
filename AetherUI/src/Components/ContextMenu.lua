@@ -82,7 +82,7 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 			table.insert(rows, New("Frame")({
 				Size = UDim2.new(1, 0, 0, 1),
 				BackgroundColor3 = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				BorderSizePixel = 0,
 				LayoutOrder = i,
@@ -102,7 +102,7 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 		}
 
 		local itemColor = Computed(function()
-			local t = Fusion.peek(theme)
+			local t = theme:get()
 			if item.Disabled then
 				return t.TextDisabled
 			end
@@ -136,7 +136,7 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 				Font = Enum.Font.RobotoMono,
 				TextSize = 10,
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).TextMuted
+					return theme:get().TextMuted
 				end),
 				LayoutOrder = 3,
 			}))
@@ -145,7 +145,7 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 				Size = UDim2.fromOffset(12, 12),
 				LayoutOrder = 3,
 				Color = Computed(function()
-					return Fusion.peek(theme).TextMuted
+					return theme:get().TextMuted
 				end),
 			}))
 		end
@@ -158,7 +158,7 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 			AutoButtonColor = false,
 			LayoutOrder = i,
 			BackgroundColor3 = Computed(function()
-				local t = Fusion.peek(theme)
+				local t = theme:get()
 				return item.Destructive and t.Danger or t.SurfaceHigh
 			end),
 			BackgroundTransparency = Spring(Computed(function()
@@ -221,7 +221,7 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 		Size = UDim2.fromOffset(MENU_WIDTH, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Surface
+			return theme:get().Surface
 		end),
 		BackgroundTransparency = Spring(Computed(function()
 			return Fusion.peek(visible) and 0 or 1
@@ -230,11 +230,11 @@ local function buildMenu(items: { MenuItem }, position: Vector2, depth: number):
 		Parent = layer,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusMd)
+				return UDim.new(0, theme:get().RadiusMd)
 			end) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),

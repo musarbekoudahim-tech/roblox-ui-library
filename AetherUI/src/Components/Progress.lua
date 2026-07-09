@@ -43,7 +43,7 @@ function Progress.Bar(props: ProgressBarProps): Frame
 	end)
 
 	local fillColor = Computed(function()
-		return props.Color or Fusion.peek(theme).Primary
+		return props.Color or theme:get().Primary
 	end)
 
 	local children: { Instance } = {
@@ -89,7 +89,7 @@ function Progress.Bar(props: ProgressBarProps): Frame
 		Position = UDim2.new(0, 0, 0.5, 0),
 		AnchorPoint = Vector2.new(0, 0.5),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).SurfaceHigh
+			return theme:get().SurfaceHigh
 		end),
 		ClipsDescendants = true,
 		[Children] = children,
@@ -109,7 +109,7 @@ function Progress.Bar(props: ProgressBarProps): Frame
 			Font = Enum.Font.RobotoMono,
 			TextSize = 11,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).TextMuted
+				return theme:get().TextMuted
 			end),
 			TextXAlignment = Enum.TextXAlignment.Right,
 		}))
@@ -157,7 +157,7 @@ function Progress.Circular(props: CircularProgressProps): Frame
 	end)
 
 	local fillColor = Computed(function()
-		return props.Color or Fusion.peek(theme).Primary
+		return props.Color or theme:get().Primary
 	end)
 
 	local function ring(color: Fusion.CanBeState<Color3>, transparency: number): (Frame, UIGradient, UIGradient)
@@ -241,7 +241,7 @@ function Progress.Circular(props: CircularProgressProps): Frame
 					New("UICorner")({ CornerRadius = UDim.new(1, 0) }),
 					New("UIStroke")({
 						Color = Computed(function()
-							return Fusion.peek(theme).SurfaceHigh
+							return theme:get().SurfaceHigh
 						end),
 						Thickness = thickness,
 					}),
@@ -295,7 +295,7 @@ function Progress.Circular(props: CircularProgressProps): Frame
 				Font = Enum.Font.GothamBold,
 				TextSize = math.max(10, math.floor(d * 0.24)),
 				TextColor3 = Computed(function()
-					return Fusion.peek(theme).Text
+					return theme:get().Text
 				end),
 			}) or nil,
 		},

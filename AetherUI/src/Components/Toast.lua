@@ -107,7 +107,7 @@ local function show(variant: ToastVariant, options: ToastOptions)
 	local dismissed = false
 
 	local accent = Computed(function()
-		return (Fusion.peek(theme) :: any)[meta.ColorKey] :: Color3
+		return (theme:get() :: any)[meta.ColorKey] :: Color3
 	end)
 
 	local bodyChildren: { Instance } = {
@@ -122,7 +122,7 @@ local function show(variant: ToastVariant, options: ToastOptions)
 			Font = Enum.Font.GothamBold,
 			TextSize = 13,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).Text
+				return theme:get().Text
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextTruncate = Enum.TextTruncate.AtEnd,
@@ -139,7 +139,7 @@ local function show(variant: ToastVariant, options: ToastOptions)
 			TextSize = 12,
 			TextWrapped = true,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).TextMuted
+				return theme:get().TextMuted
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 		}))
@@ -185,7 +185,7 @@ local function show(variant: ToastVariant, options: ToastOptions)
 		AutomaticSize = Enum.AutomaticSize.Y,
 		LayoutOrder = toastCounter,
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Surface
+			return theme:get().Surface
 		end),
 		BackgroundTransparency = Spring(Computed(function()
 			return Fusion.peek(visible) and 0 or 1
@@ -200,11 +200,11 @@ local function show(variant: ToastVariant, options: ToastOptions)
 		end,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusMd)
+				return UDim.new(0, theme:get().RadiusMd)
 			end) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),
@@ -249,7 +249,7 @@ local function show(variant: ToastVariant, options: ToastOptions)
 								Position = UDim2.fromScale(0.5, 0.5),
 								AnchorPoint = Vector2.new(0.5, 0.5),
 								Color = Computed(function()
-									return Fusion.peek(theme).TextMuted
+									return theme:get().TextMuted
 								end),
 							}),
 						},

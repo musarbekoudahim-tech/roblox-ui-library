@@ -100,7 +100,7 @@ local function Accordion(props: AccordionProps): Frame
 				Size = UDim2.fromOffset(15, 15),
 				LayoutOrder = 1,
 				Color = Computed(function()
-					return Fusion.peek(theme).TextMuted
+					return theme:get().TextMuted
 				end),
 			}))
 		end
@@ -112,7 +112,7 @@ local function Accordion(props: AccordionProps): Frame
 			Font = Enum.Font.GothamMedium,
 			TextSize = 13,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).Text
+				return theme:get().Text
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			LayoutOrder = 2,
@@ -125,7 +125,7 @@ local function Accordion(props: AccordionProps): Frame
 				return Fusion.peek(isOpen) and 180 or 0
 			end), 25, 1),
 			Color = Computed(function()
-				return Fusion.peek(theme).TextMuted
+				return theme:get().TextMuted
 			end),
 		}))
 
@@ -147,7 +147,7 @@ local function Accordion(props: AccordionProps): Frame
 					AutoButtonColor = false,
 					LayoutOrder = 1,
 					BackgroundColor3 = Computed(function()
-						return Fusion.peek(theme).SurfaceHigh
+						return theme:get().SurfaceHigh
 					end),
 					BackgroundTransparency = Spring(Computed(function()
 						return Fusion.peek(hovered) and 0.5 or 1
@@ -164,7 +164,7 @@ local function Accordion(props: AccordionProps): Frame
 					end,
 					[Children] = {
 						New("UICorner")({ CornerRadius = Computed(function()
-							return UDim.new(0, Fusion.peek(theme).RadiusSm)
+							return UDim.new(0, theme:get().RadiusSm)
 						end) }),
 						New("Frame")({
 							Size = UDim2.fromScale(1, 1),

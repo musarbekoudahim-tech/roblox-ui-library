@@ -32,7 +32,29 @@ for name, spec in Themes :: { [string]: ThemeSpec } do
 	Theme.Registered[name] = spec
 end
 
-Theme.Current = Value("Dark")
+--- Flattens a theme spec into a single token table:
+--- all Colors at the top level, plus RadiusSm/RadiusMd/... numbers.
+local function flatten(spec: ThemeSpec): { [string]: any }
+	local flat: { [string]: any } = {}
+	for key, color in spec.Colors :: any do
+		flat[key] = color
+	end
+	for key, value in spec.Radius :: any do
+		flat["Radius" .. key] = value
+	end
+	flat.StrokeTransparency = spec.StrokeTransparency
+	flat.GlassTransparency = spec.GlassTransparency
+	flat.ShadowTransparency = spec.ShadowTransparency
+	flat.Mode = spec.Mode or "Dark"
+	return flat
+end
+
+--- Name of the active theme ("Dark" by default).
+Theme.ActiveName = Value("Dark")
+--- Reactive flat token table of the active theme. Components read
+--- `theme:get().Primary`, `theme:get().RadiusMd`, etc. inside Computeds so
+--- switching themes live-updates everything.
+Theme.Current = Value(flatten(Theme.Registered.Dark))
 Theme.Changed = Signal.new() :: any
 
 -- Reactive token stores ---------------------------------------------------
@@ -90,7 +112,8 @@ function Theme.Apply(name: string)
 	Theme.Spacing = table.clone(spec.Spacing)
 	Theme.TextSizes = table.clone(spec.TextSizes)
 
-	Theme.Current:set(name)
+	Theme.ActiveName:set(name)
+	Theme.Current:set(flatten(spec))
 	Theme.Changed:Fire(name)
 end
 
@@ -106,7 +129,7 @@ end
 
 --- Returns the raw spec of the current theme.
 function Theme.GetSpec(): ThemeSpec
-	return Theme.Registered[Fusion.peek and Fusion.peek(Theme.Current) or Theme.Current:get()]
+	return Theme.Registered[Theme.ActiveName:get()]
 end
 
 --- Sets a single color token on the fly (e.g. Theme.SetColor("Primary", myColor)).
@@ -135,7 +158,7 @@ function Theme.Save(): string
 		end
 	end
 	return HttpService:JSONEncode({
-		Active = Theme.Current:get(),
+		Active = Theme.ActiveName:get(),
 		Custom = custom,
 	})
 end

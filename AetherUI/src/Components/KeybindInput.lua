@@ -90,7 +90,7 @@ local function KeybindInput(props: KeybindInputProps): TextButton
 		Name = "AetherKeybindInput",
 		Size = props.Size or UDim2.new(0, 140, 0, 32),
 		BackgroundColor3 = Computed(function()
-			local t = Fusion.peek(theme)
+			local t = theme:get()
 			return Fusion.peek(capturing) and t.SurfaceHigh or t.Surface
 		end),
 		Text = "",
@@ -100,11 +100,11 @@ local function KeybindInput(props: KeybindInputProps): TextButton
 		[OnEvent("Activated")] = startCapture,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusSm)
+				return UDim.new(0, theme:get().RadiusSm)
 			end) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					local t = Fusion.peek(theme)
+					local t = theme:get()
 					return Fusion.peek(capturing) and t.Primary or t.Border
 				end),
 				Thickness = Computed(function()
@@ -118,7 +118,7 @@ local function KeybindInput(props: KeybindInputProps): TextButton
 				Font = Enum.Font.RobotoMono,
 				TextSize = 12,
 				TextColor3 = Computed(function()
-					local t = Fusion.peek(theme)
+					local t = theme:get()
 					if Fusion.peek(capturing) then
 						return t.Primary
 					end

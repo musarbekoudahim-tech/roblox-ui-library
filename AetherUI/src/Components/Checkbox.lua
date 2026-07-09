@@ -43,6 +43,7 @@ return function(props: { [string]: any }): TextButton
 
 	return New("TextButton")({
 		Name = "AetherCheckbox",
+		Parent = props.Parent,
 		Text = "",
 		AutoButtonColor = false,
 		BackgroundTransparency = 1,

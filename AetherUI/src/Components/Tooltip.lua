@@ -59,7 +59,7 @@ local function createTip(options: TooltipOptions, anchorPos: Vector2, anchorSize
 			Font = Enum.Font.GothamBold,
 			TextSize = 12,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).Text
+				return theme:get().Text
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 		}))
@@ -79,7 +79,7 @@ local function createTip(options: TooltipOptions, anchorPos: Vector2, anchorSize
 			TextSize = 12,
 			TextWrapped = true,
 			TextColor3 = Computed(function()
-				return options.Title and Fusion.peek(theme).TextMuted or Fusion.peek(theme).Text
+				return options.Title and theme:get().TextMuted or theme:get().Text
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			LayoutOrder = 1,
@@ -93,13 +93,13 @@ local function createTip(options: TooltipOptions, anchorPos: Vector2, anchorSize
 		table.insert(textRow, New("TextLabel")({
 			AutomaticSize = Enum.AutomaticSize.XY,
 			BackgroundColor3 = Computed(function()
-				return Fusion.peek(theme).SurfaceHigh
+				return theme:get().SurfaceHigh
 			end),
 			Text = options.Shortcut,
 			Font = Enum.Font.RobotoMono,
 			TextSize = 10,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).TextMuted
+				return theme:get().TextMuted
 			end),
 			LayoutOrder = 2,
 			[Children] = {
@@ -135,7 +135,7 @@ local function createTip(options: TooltipOptions, anchorPos: Vector2, anchorSize
 			return UDim2.fromOffset(anchorPos.X + anchorSize.X / 2, yOffset + lift)
 		end), 40, 1),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).SurfaceHigh
+			return theme:get().SurfaceHigh
 		end),
 		BackgroundTransparency = Spring(Computed(function()
 			return Fusion.peek(visible) and 0 or 1
@@ -144,11 +144,11 @@ local function createTip(options: TooltipOptions, anchorPos: Vector2, anchorSize
 		Parent = layer,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusSm)
+				return UDim.new(0, theme:get().RadiusSm)
 			end) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),

@@ -87,7 +87,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 		AutoButtonColor = false,
 		[Children] = {
 			New("UICorner")({ CornerRadius = Computed(function()
-				return UDim.new(0, Fusion.peek(theme).RadiusSm)
+				return UDim.new(0, theme:get().RadiusSm)
 			end) }),
 			-- white → transparent horizontal
 			New("Frame")({
@@ -225,11 +225,11 @@ local function ColorPicker(props: ColorPickerProps): Frame
 		Name = "HexInput",
 		Size = UDim2.new(1, -76, 1, 0),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).SurfaceHigh
+			return theme:get().SurfaceHigh
 		end),
 		Text = hexText,
 		TextColor3 = Computed(function()
-			return Fusion.peek(theme).Text
+			return theme:get().Text
 		end),
 		Font = Enum.Font.RobotoMono,
 		TextSize = 13,
@@ -238,7 +238,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 			New("UICorner")({ CornerRadius = UDim.new(0, 8) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),
@@ -261,7 +261,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 		Name = "CopyButton",
 		Size = UDim2.fromOffset(32, 32),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).SurfaceHigh
+			return theme:get().SurfaceHigh
 		end),
 		Text = "",
 		AutoButtonColor = false,
@@ -283,7 +283,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 			New("UICorner")({ CornerRadius = UDim.new(0, 8) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),
@@ -294,7 +294,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 				Position = UDim2.fromScale(0.5, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Color = Computed(function()
-					local t = Fusion.peek(theme)
+					local t = theme:get()
 					return Fusion.peek(copied) and t.Success or t.TextMuted
 				end),
 			}),
@@ -310,7 +310,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 			New("UICorner")({ CornerRadius = UDim.new(0, 8) }),
 			New("UIStroke")({
 				Color = Computed(function()
-					return Fusion.peek(theme).Border
+					return theme:get().Border
 				end),
 				Thickness = 1,
 			}),
@@ -341,7 +341,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 				New("UICorner")({ CornerRadius = UDim.new(1, 0) }),
 				New("UIStroke")({
 					Color = Computed(function()
-						return Fusion.peek(theme).Border
+						return theme:get().Border
 					end),
 					Thickness = 1,
 					Transparency = 0.4,

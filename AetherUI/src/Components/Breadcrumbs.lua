@@ -58,7 +58,7 @@ local function Breadcrumbs(props: BreadcrumbsProps): Frame
 				Size = UDim2.fromOffset(13, 13),
 				LayoutOrder = 1,
 				Color = Computed(function()
-					local t = Fusion.peek(theme)
+					local t = theme:get()
 					return isLast and t.Text or t.TextMuted
 				end),
 			}))
@@ -71,7 +71,7 @@ local function Breadcrumbs(props: BreadcrumbsProps): Frame
 			TextSize = 12,
 			LayoutOrder = 2,
 			TextColor3 = Spring(Computed(function()
-				local t = Fusion.peek(theme)
+				local t = theme:get()
 				if isLast then
 					return t.Text
 				end
@@ -108,7 +108,7 @@ local function Breadcrumbs(props: BreadcrumbsProps): Frame
 				Size = UDim2.fromOffset(12, 12),
 				LayoutOrder = order,
 				Color = Computed(function()
-					return Fusion.peek(theme).TextDisabled
+					return theme:get().TextDisabled
 				end),
 			}))
 		end

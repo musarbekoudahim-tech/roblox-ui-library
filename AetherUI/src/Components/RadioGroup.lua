@@ -116,6 +116,7 @@ return function(props: { [string]: any }): Frame
 
 	return New("Frame")({
 		Name = "AetherRadioGroup",
+		Parent = props.Parent,
 		BackgroundTransparency = 1,
 		AutomaticSize = Enum.AutomaticSize.XY,
 		LayoutOrder = props.LayoutOrder or 0,

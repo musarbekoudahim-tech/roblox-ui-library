@@ -53,7 +53,7 @@ function Card.Card(props: CardProps): Frame
 				Size = UDim2.fromOffset(16, 16),
 				LayoutOrder = 1,
 				Color = Computed(function()
-					return Fusion.peek(theme).Primary
+					return theme:get().Primary
 				end),
 			}))
 		end
@@ -75,7 +75,7 @@ function Card.Card(props: CardProps): Frame
 					Font = Enum.Font.GothamBold,
 					TextSize = 14,
 					TextColor3 = Computed(function()
-						return Fusion.peek(theme).Text
+						return theme:get().Text
 					end),
 					TextXAlignment = Enum.TextXAlignment.Left,
 				}),
@@ -86,7 +86,7 @@ function Card.Card(props: CardProps): Frame
 					Font = Enum.Font.Gotham,
 					TextSize = 12,
 					TextColor3 = Computed(function()
-						return Fusion.peek(theme).TextMuted
+						return theme:get().TextMuted
 					end),
 					TextXAlignment = Enum.TextXAlignment.Left,
 					TextWrapped = true,
@@ -164,7 +164,7 @@ function Card.Section(props: SectionProps): Frame
 			Font = Enum.Font.GothamBold,
 			TextSize = 11,
 			TextColor3 = Computed(function()
-				return Fusion.peek(theme).TextMuted
+				return theme:get().TextMuted
 			end),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			LayoutOrder = 0,

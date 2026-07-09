@@ -272,6 +272,7 @@ return function(props: { [string]: any }): Frame
 
 	return New("Frame")({
 		Name = "AetherTextInput",
+		Parent = props.Parent,
 		BackgroundTransparency = 1,
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Size = if props.FullWidth ~= false then UDim2.new(1, 0, 0, 0) else UDim2.fromOffset(260, 0),

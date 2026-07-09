@@ -30,6 +30,7 @@ return function(props: { [string]: any }): Frame
 
 	return New("Frame")({
 		Name = "AetherTextArea",
+		Parent = props.Parent,
 		BackgroundTransparency = 1,
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Size = UDim2.new(1, 0, 0, 0),

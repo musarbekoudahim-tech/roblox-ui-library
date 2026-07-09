@@ -31,7 +31,7 @@ function FormField.Label(props: LabelProps): TextLabel
 		Font = Enum.Font.GothamMedium,
 		TextSize = 13,
 		TextColor3 = Computed(function()
-			return Fusion.peek(theme).Text
+			return theme:get().Text
 		end),
 		TextXAlignment = Enum.TextXAlignment.Left,
 		LayoutOrder = props.LayoutOrder,
@@ -58,7 +58,7 @@ function FormField.HelperText(props: HelperTextProps): TextLabel
 		TextSize = 12,
 		TextWrapped = true,
 		TextColor3 = Computed(function()
-			local t = Fusion.peek(theme)
+			local t = theme:get()
 			if props.Variant == "error" then
 				return t.Danger
 			elseif props.Variant == "success" then

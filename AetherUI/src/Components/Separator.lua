@@ -22,7 +22,7 @@ local function line(theme: any, size: UDim2): Frame
 	return New("Frame")({
 		Size = size,
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Border
+			return theme:get().Border
 		end),
 		BorderSizePixel = 0,
 	}) :: Frame
@@ -36,7 +36,7 @@ local function Separator(props: SeparatorProps): Frame
 			Name = "AetherSeparator",
 			Size = UDim2.new(0, 1, 1, 0),
 			BackgroundColor3 = Computed(function()
-				return Fusion.peek(theme).Border
+				return theme:get().Border
 			end),
 			BorderSizePixel = 0,
 			LayoutOrder = props.LayoutOrder,
@@ -60,7 +60,7 @@ local function Separator(props: SeparatorProps): Frame
 				New("Frame")({
 					Size = UDim2.new(0.5, -40, 0, 1),
 					BackgroundColor3 = Computed(function()
-						return Fusion.peek(theme).Border
+						return theme:get().Border
 					end),
 					BorderSizePixel = 0,
 					LayoutOrder = 1,
@@ -72,14 +72,14 @@ local function Separator(props: SeparatorProps): Frame
 					Font = Enum.Font.GothamMedium,
 					TextSize = 11,
 					TextColor3 = Computed(function()
-						return Fusion.peek(theme).TextMuted
+						return theme:get().TextMuted
 					end),
 					LayoutOrder = 2,
 				}),
 				New("Frame")({
 					Size = UDim2.new(0.5, -40, 0, 1),
 					BackgroundColor3 = Computed(function()
-						return Fusion.peek(theme).Border
+						return theme:get().Border
 					end),
 					BorderSizePixel = 0,
 					LayoutOrder = 3,
@@ -93,7 +93,7 @@ local function Separator(props: SeparatorProps): Frame
 		Name = "AetherSeparator",
 		Size = UDim2.new(1, 0, 0, 1),
 		BackgroundColor3 = Computed(function()
-			return Fusion.peek(theme).Border
+			return theme:get().Border
 		end),
 		BorderSizePixel = 0,
 		LayoutOrder = props.LayoutOrder,

@@ -69,11 +69,16 @@ AetherUI.Checkbox = require(Components.Checkbox)
 AetherUI.RadioGroup = require(Components.RadioGroup)
 AetherUI.Toggle = require(Components.Toggle)
 AetherUI.ColorPicker = require(Components.ColorPicker)
-AetherUI.FormField = require(Components.FormField)
+local FormFieldModule = require(Components.FormField)
+AetherUI.FormField = FormFieldModule.Field
+AetherUI.Label = FormFieldModule.Label
+AetherUI.HelperText = FormFieldModule.HelperText
 AetherUI.KeybindInput = require(Components.KeybindInput)
 
 AetherUI.Tabs = require(Components.Tabs)
-AetherUI.Card = require(Components.Card)
+local CardModule = require(Components.Card)
+AetherUI.Card = CardModule.Card
+AetherUI.Section = CardModule.Section
 AetherUI.Accordion = require(Components.Accordion)
 AetherUI.Separator = require(Components.Separator)
 AetherUI.ScrollFrame = require(Components.ScrollFrame)
@@ -89,7 +94,8 @@ AetherUI.CommandPalette = require(Components.CommandPalette)
 AetherUI.Progress = require(Components.Progress)
 AetherUI.DataTable = require(Components.DataTable)
 AetherUI.TreeView = require(Components.TreeView)
-AetherUI.Badge = require(Components.Badge)
+local BadgeModule = require(Components.Badge)
+AetherUI.Badge = BadgeModule.new
 AetherUI.DatePicker = require(Components.DatePicker)
 AetherUI.TimePicker = require(Components.TimePicker)
 AetherUI.Stepper = require(Components.Stepper)
@@ -98,10 +104,16 @@ AetherUI.EmptyState = require(Components.EmptyState)
 
 -- Convenience aliases ---------------------------------------------------------------
 
-AetherUI.Avatar = AetherUI.Badge.Avatar
-AetherUI.StatusIndicator = AetherUI.Badge.Status
+AetherUI.Avatar = BadgeModule.Avatar
+AetherUI.StatusIndicator = BadgeModule.Status
 AetherUI.ProgressBar = AetherUI.Progress.Bar
 AetherUI.CircularProgress = AetherUI.Progress.Circular
+
+--- Reactive state helper re-exported from Fusion for controlled components:
+---   local volume = AetherUI.Value(50)
+---   AetherUI.Slider({ Value = volume })
+AetherUI.Value = AetherUI.Fusion.Value
+AetherUI.Computed = AetherUI.Fusion.Computed
 
 -- Lifecycle --------------------------------------------------------------------------
 
