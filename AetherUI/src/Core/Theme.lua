@@ -137,6 +137,10 @@ function Theme.SetColor(token: string, color: Color3)
 	local state = Theme.Colors[token]
 	assert(state ~= nil, `[AetherUI] Unknown color token "{token}".`)
 	state:set(color)
+	-- Propagate into the flat reactive token table so all components update.
+	local flat = table.clone(Theme.Current:get())
+	flat[token] = color
+	Theme.Current:set(flat)
 end
 
 -- Persistence ----------------------------------------------------------------
