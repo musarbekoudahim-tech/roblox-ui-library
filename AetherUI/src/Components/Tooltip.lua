@@ -216,4 +216,7 @@ function Tooltip.attach(target: GuiObject, options: TooltipOptions): () -> ()
 	end
 end
 
+-- PascalCase alias for public API consistency.
+Tooltip.Attach = Tooltip.attach
+
 return Tooltip

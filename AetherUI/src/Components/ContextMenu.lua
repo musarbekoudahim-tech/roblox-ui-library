@@ -304,4 +304,13 @@ function ContextMenu.close()
 	closeActive()
 end
 
+--- PascalCase alias. Accepts either an items array or `{ Items = { ... } }`.
+function ContextMenu.Attach(target: GuiObject, itemsOrOptions: { MenuItem } | { Items: { MenuItem } }): () -> ()
+	local items = (itemsOrOptions :: any).Items or itemsOrOptions
+	return ContextMenu.attach(target, items :: { MenuItem })
+end
+
+ContextMenu.Open = ContextMenu.open
+ContextMenu.Close = ContextMenu.close
+
 return ContextMenu

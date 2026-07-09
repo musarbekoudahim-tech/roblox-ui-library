@@ -1,0 +1,12 @@
+[package]
+name = "your-name/aetherui"
+description = "A premium, production-grade UI library for Roblox. Built on Fusion."
+version = "1.0.0"
+license = "MIT"
+authors = ["AetherUI contributors"]
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+include = ["src", "wally.toml", "README.md", "LICENSE"]
+
+[dependencies]
+Fusion = "elttob/fusion@0.2.0"

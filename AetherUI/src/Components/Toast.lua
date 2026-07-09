@@ -300,4 +300,33 @@ function Toast.show(variant: ToastVariant, options: ToastOptions)
 	return show(variant, options)
 end
 
+-- PascalCase conveniences: accept either a title string or a full options table.
+--   Toast.Success("Saved!")
+--   Toast.Success("Saved!", { Description = "All changes stored." })
+--   Toast.Success({ Title = "Saved!", Duration = 5 })
+local function coerce(titleOrOptions: string | ToastOptions, options: ToastOptions?): ToastOptions
+	if type(titleOrOptions) == "string" then
+		local opts = if options then table.clone(options) else {}
+		opts.Title = titleOrOptions
+		return opts
+	end
+	return titleOrOptions
+end
+
+function Toast.Info(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+	return show("info", coerce(titleOrOptions, options))
+end
+function Toast.Success(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+	return show("success", coerce(titleOrOptions, options))
+end
+function Toast.Warning(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+	return show("warning", coerce(titleOrOptions, options))
+end
+function Toast.Error(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+	return show("error", coerce(titleOrOptions, options))
+end
+function Toast.Show(variant: ToastVariant, titleOrOptions: string | ToastOptions, options: ToastOptions?)
+	return show(variant, coerce(titleOrOptions, options))
+end
+
 return Toast

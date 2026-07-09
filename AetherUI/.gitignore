@@ -1,0 +1,21 @@
+# Wally
+Packages/
+ServerPackages/
+DevPackages/
+wally.lock
+
+# Rojo
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+sourcemap.json
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

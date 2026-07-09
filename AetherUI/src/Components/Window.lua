@@ -308,6 +308,7 @@ local function Window(props: WindowProps): WindowHandle
 
 	return {
 		Instance = windowFrame,
+		Root = windowFrame,
 		Content = contentFrame,
 		Toggle = toggle,
 		Show = show,

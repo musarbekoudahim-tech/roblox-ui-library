@@ -87,4 +87,7 @@ function Sound.Destroy()
 	table.clear(cache)
 end
 
+-- Lowercase alias used internally by components.
+Sound.play = Sound.Play
+
 return Sound
