@@ -30,6 +30,14 @@ export type KeybindHandle = {
 	Disconnect: (self: KeybindHandle) -> (),
 }
 
+--- Lightweight bind descriptor used by KeybindInput and transient binds.
+export type Bind = {
+	Key: Enum.KeyCode,
+	Ctrl: boolean?,
+	Shift: boolean?,
+	Alt: boolean?,
+}
+
 local Keybinds = {}
 
 Keybinds.Enabled = true
@@ -124,6 +132,36 @@ function Keybinds.Format(key: Enum.KeyCode?, modifiers: { string }?): string
 		table.insert(parts, key.Name)
 	end
 	return if #parts > 0 then table.concat(parts, " + ") else "None"
+end
+
+--- Formats a Bind descriptor for display, e.g. "Ctrl + K".
+function Keybinds.format(bind: Bind): string
+	local mods = {}
+	if bind.Ctrl then
+		table.insert(mods, "Ctrl")
+	end
+	if bind.Shift then
+		table.insert(mods, "Shift")
+	end
+	if bind.Alt then
+		table.insert(mods, "Alt")
+	end
+	return Keybinds.Format(bind.Key, mods)
+end
+
+--- Binds a single key until unbound. Returns an unbind function.
+--- Used internally for transient bindings like Escape-to-close.
+local transientCounter = 0
+function Keybinds.bindTransient(key: Enum.KeyCode, callback: () -> ()): () -> ()
+	transientCounter += 1
+	local id = "__transient_" .. transientCounter
+	Keybinds.Register(id, {
+		Key = key,
+		Callback = callback,
+	})
+	return function()
+		Keybinds.Unregister(id)
+	end
 end
 
 -- Input handling ------------------------------------------------------------
