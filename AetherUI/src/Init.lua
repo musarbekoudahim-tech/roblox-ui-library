@@ -10,8 +10,18 @@
 	AetherUI — a premium, production-grade UI library for Roblox.
 	Built on Fusion. Themeable, animated, accessible, obsessively polished.
 
+	STANDALONE RUNTIME BUILD
+	  • No dependencies on ReplicatedStorage, StarterPlayerScripts, or any
+	    local game project folders.
+	  • The UI container is parented to game:GetService("CoreGui") (or the
+	    executor's hidden UI via gethui when available), so the interface
+	    persists across respawns, independent of the local character state.
+	  • This module returns the full library table, so it can be initialized
+	    dynamically:
+			local AetherUI = loadstring(game:HttpGet("URL"))()
+
 	Quick start:
-		local AetherUI = require(path.to.AetherUI)
+		local AetherUI = loadstring(game:HttpGet("URL"))()
 		AetherUI.Theme.Apply("Dark")
 
 		local window = AetherUI.Window({ Title = "My App" })
@@ -125,4 +135,6 @@ function AetherUI.Destroy()
 	AetherUI.Overlay.destroy()
 end
 
+-- The library table is returned at the very end so the script works when
+-- executed dynamically via loadstring(game:HttpGet("URL"))().
 return AetherUI

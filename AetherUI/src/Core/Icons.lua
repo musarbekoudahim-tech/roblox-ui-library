@@ -7,7 +7,7 @@
 	format (https://github.com/latte-soft/lucide-roblox). Load the generated
 	icon data module and register it once:
 
-		local lucideData = require(ReplicatedStorage.LucideIcons) -- generated pack
+		local lucideData = loadstring(game:HttpGet("<lucide-pack-url>"))()
 		AetherUI.Icons.LoadPack(lucideData)
 
 	After that, every component accepts icons by name:
