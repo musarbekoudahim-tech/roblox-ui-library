@@ -5,29 +5,22 @@
 	Guarantees a single top-most root with sensible DisplayOrder.
 ]=]
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-
 local Overlay = {}
 
 local root: ScreenGui? = nil
 
+--- Standalone runtime: the UI always lives in CoreGui so it persists across
+--- character respawns and is fully independent of the LocalPlayer's PlayerGui.
+--- Prefers the executor-provided hidden UI container (gethui) when available.
 local function getParent(): Instance
-	if RunService:IsStudio() and not RunService:IsRunning() then
-		return game:GetService("CoreGui")
+	local getHui = (getfenv() :: any).gethui
+	if typeof(getHui) == "function" then
+		local ok, hui = pcall(getHui)
+		if ok and typeof(hui) == "Instance" then
+			return hui
+		end
 	end
-	local player = Players.LocalPlayer
-	if player then
-		return player:WaitForChild("PlayerGui")
-	end
-	-- exploit/hopperbin environments
-	local ok, coreGui = pcall(function()
-		return game:GetService("CoreGui")
-	end)
-	if ok then
-		return coreGui
-	end
-	error("AetherUI: could not resolve a GUI parent")
+	return game:GetService("CoreGui")
 end
 
 function Overlay.getRoot(): ScreenGui
