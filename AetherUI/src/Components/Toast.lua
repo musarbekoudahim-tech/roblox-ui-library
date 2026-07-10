@@ -300,32 +300,40 @@ function Toast.show(variant: ToastVariant, options: ToastOptions)
 	return show(variant, options)
 end
 
--- PascalCase conveniences: accept either a title string or a full options table.
+-- PascalCase conveniences: accept a title string or a full options table.
 --   Toast.Success("Saved!")
+--   Toast.Success("Saved!", "All changes stored.")
 --   Toast.Success("Saved!", { Description = "All changes stored." })
 --   Toast.Success({ Title = "Saved!", Duration = 5 })
-local function coerce(titleOrOptions: string | ToastOptions, options: ToastOptions?): ToastOptions
+local function coerce(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?): ToastOptions
 	if type(titleOrOptions) == "string" then
-		local opts = if options then table.clone(options) else {}
+		local opts: ToastOptions
+		if type(options) == "table" then
+			opts = table.clone(options)
+		elseif type(options) == "string" then
+			opts = { Description = options }
+		else
+			opts = {}
+		end
 		opts.Title = titleOrOptions
 		return opts
 	end
 	return titleOrOptions
 end
 
-function Toast.Info(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Info(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("info", coerce(titleOrOptions, options))
 end
-function Toast.Success(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Success(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("success", coerce(titleOrOptions, options))
 end
-function Toast.Warning(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Warning(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("warning", coerce(titleOrOptions, options))
 end
-function Toast.Error(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Error(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("error", coerce(titleOrOptions, options))
 end
-function Toast.Show(variant: ToastVariant, titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Show(variant: ToastVariant, titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show(variant, coerce(titleOrOptions, options))
 end
 

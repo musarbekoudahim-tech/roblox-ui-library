@@ -77,12 +77,20 @@ export type FormFieldProps = {
 	Required: boolean?,
 	HelperText: Fusion.CanBeState<string>?,
 	Error: Fusion.CanBeState<string>?,
-	Content: Instance,
+	Content: Instance?,
+	--- Alias for `Content`.
+	Child: Instance?,
 	LayoutOrder: number?,
 	Parent: Instance?,
 }
 
 function FormField.Field(props: FormFieldProps): Frame
+	local content = props.Content or props.Child
+	assert(
+		typeof(content) == "Instance",
+		"[AetherUI] FormField requires a `Content` (or `Child`) Instance — e.g. FormField({ Label = ..., Content = AetherUI.TextInput({...}) })"
+	)
+
 	local children: { Instance } = {
 		New("UIListLayout")({
 			FillDirection = Enum.FillDirection.Vertical,
@@ -96,8 +104,8 @@ function FormField.Field(props: FormFieldProps): Frame
 		table.insert(children, label)
 	end
 
-	props.Content.LayoutOrder = 2
-	table.insert(children, props.Content)
+	(content :: any).LayoutOrder = 2
+	table.insert(children, content)
 
 	if props.Error then
 		table.insert(children, FormField.HelperText({ Text = props.Error, Variant = "error", LayoutOrder = 3 }))

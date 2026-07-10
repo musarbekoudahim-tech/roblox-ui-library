@@ -57,8 +57,9 @@ addTree(fusionDir, "Fusion");
 
 // The runtime Fusion resolver is replaced by the vendored bundle, PLUS a
 // compatibility shim: `peek` only exists in Fusion 0.3+, and 0.2's strict
-// export table hard-errors on unknown members. In 0.2, `state:get(false)`
-// reads a value WITHOUT registering a dependency — identical semantics.
+// export table hard-errors on unknown members. AetherUI uses `Fusion.peek`
+// inside Computeds expecting reactive re-evaluation, so the shim maps to
+// `state:get()` WITH dependency capture (safe outside capture contexts too).
 modules.set(
   "Core.Fusion",
   `-- Vendored Fusion 0.2 (github.com/dphfox/Fusion, MIT) — bundled below.
@@ -73,7 +74,7 @@ end
 
 local function peek(target)
 	if typeof(target) == "table" and typeof(target.get) == "function" then
-		return target:get(false)
+		return target:get()
 	end
 	return target
 end
