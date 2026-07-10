@@ -295,7 +295,9 @@ local PROP_TYPES = {
 	Size = "UDim2", Position = "UDim2", CanvasSize = "UDim2",
 	AnchorPoint = "Vector2", ImageRectOffset = "Vector2", ImageRectSize = "Vector2", CanvasPosition = "Vector2",
 	BackgroundTransparency = "number", TextTransparency = "number", ImageTransparency = "number",
-	Transparency = "number", TextSize = "number", Rotation = "number", ZIndex = "number",
+	-- NOTE: `Transparency` is intentionally unchecked: number on most GUI classes
+	-- but NumberSequence on UIGradient (mirrors the `Color` exemption above).
+	TextSize = "number", Rotation = "number", ZIndex = "number",
 	LayoutOrder = "number", Thickness = "number",
 	Visible = "boolean", Active = "boolean", ClipsDescendants = "boolean", AutoButtonColor = "boolean",
 	Text = "string", PlaceholderText = "string", Image = "string", Name = "string",
@@ -314,6 +316,11 @@ local KNOWN_EVENTS = {
 }
 
 local READ_DEFAULTS = {
+	-- Real Roblox instances default these; the mock must too (only used when unset).
+	Position = function() return UDim2.new() end,
+	Size = function() return UDim2.new() end,
+	AnchorPoint = function() return Vector2.new(0, 0) end,
+	Rotation = function() return 0 end,
 	AbsoluteSize = function() return Vector2.new(360, 586) end,
 	AbsolutePosition = function() return Vector2.new(0, 0) end,
 	AbsoluteWindowSize = function() return Vector2.new(360, 586) end,
@@ -446,6 +453,7 @@ instanceMethods = {
 InstanceMeta = {
 	__rtype = "Instance",
 	__index = function(self, key)
+		if key == "ClassName" then return self._class end
 		if instanceMethods[key] then return instanceMethods[key] end
 		if KNOWN_EVENTS[key] then
 			if not self._events[key] then self._events[key] = newSignal() end
@@ -463,6 +471,10 @@ InstanceMeta = {
 	end,
 	__newindex = function(self, key, value)
 		local expected = PROP_TYPES[key]
+		-- Class-specific overrides: BlurEffect.Size is a number, not UDim2.
+		if key == "Size" and self._class == "BlurEffect" then
+			expected = "number"
+		end
 		if expected ~= nil then
 			local got = mockTypeof(value)
 			if got ~= expected then

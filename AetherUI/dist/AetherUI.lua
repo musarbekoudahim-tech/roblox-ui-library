@@ -5451,7 +5451,8 @@ type AccordionItem = {
 	Id: string,
 	Title: string,
 	Icon: string?,
-	Content: () -> Instance,
+	--- Builder function, ready Instance, or plain text body.
+	Content: (() -> Instance) | Instance | string | nil,
 	DefaultOpen: boolean?,
 }
 
@@ -5505,8 +5506,30 @@ local function Accordion(props: AccordionProps): Frame
 		end)
 		local hovered = Value(false)
 
-		-- content is mounted once, revealed via ClipsDescendants + size spring
-		local contentInstance = item.Content()
+		-- content is mounted once, revealed via ClipsDescendants + size spring.
+		-- `Content` may be a builder function, a ready Instance, or plain text.
+		local contentInstance: Instance
+		if typeof(item.Content) == "function" then
+			contentInstance = (item.Content :: any)()
+		elseif typeof(item.Content) == "Instance" then
+			contentInstance = item.Content :: any
+		else
+			contentInstance = New("TextLabel")({
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = Enum.AutomaticSize.Y,
+				BackgroundTransparency = 1,
+				Text = if typeof(item.Content) == "string"
+					then item.Content :: any
+					else ((item :: any).Body or ""),
+				TextWrapped = true,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				TextColor3 = Computed(function()
+					return theme:get().TextMuted
+				end),
+				TextSize = 13,
+				Font = Enum.Font.Gotham,
+			})
+		end
 		local contentHeight = Value(0)
 		if contentInstance:IsA("GuiObject") then
 			local function measure()
@@ -8885,12 +8908,20 @@ type FormFieldProps = {
 	Required: boolean?,
 	HelperText: Fusion.CanBeState<string>?,
 	Error: Fusion.CanBeState<string>?,
-	Content: Instance,
+	Content: Instance?,
+	--- Alias for `Content`.
+	Child: Instance?,
 	LayoutOrder: number?,
 	Parent: Instance?,
 }
 
 function FormField.Field(props: FormFieldProps): Frame
+	local content = props.Content or props.Child
+	assert(
+		typeof(content) == "Instance",
+		"[AetherUI] FormField requires a `Content` (or `Child`) Instance — e.g. FormField({ Label = ..., Content = AetherUI.TextInput({...}) })"
+	)
+
 	local children: { Instance } = {
 		New("UIListLayout")({
 			FillDirection = Enum.FillDirection.Vertical,
@@ -8904,8 +8935,8 @@ function FormField.Field(props: FormFieldProps): Frame
 		table.insert(children, label)
 	end
 
-	props.Content.LayoutOrder = 2
-	table.insert(children, props.Content)
+	(content :: any).LayoutOrder = 2
+	table.insert(children, content)
 
 	if props.Error then
 		table.insert(children, FormField.HelperText({ Text = props.Error, Variant = "error", LayoutOrder = 3 }))
@@ -12684,32 +12715,40 @@ function Toast.show(variant: ToastVariant, options: ToastOptions)
 	return show(variant, options)
 end
 
--- PascalCase conveniences: accept either a title string or a full options table.
+-- PascalCase conveniences: accept a title string or a full options table.
 --   Toast.Success("Saved!")
+--   Toast.Success("Saved!", "All changes stored.")
 --   Toast.Success("Saved!", { Description = "All changes stored." })
 --   Toast.Success({ Title = "Saved!", Duration = 5 })
-local function coerce(titleOrOptions: string | ToastOptions, options: ToastOptions?): ToastOptions
+local function coerce(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?): ToastOptions
 	if type(titleOrOptions) == "string" then
-		local opts = if options then table.clone(options) else {}
+		local opts: ToastOptions
+		if type(options) == "table" then
+			opts = table.clone(options)
+		elseif type(options) == "string" then
+			opts = { Description = options }
+		else
+			opts = {}
+		end
 		opts.Title = titleOrOptions
 		return opts
 	end
 	return titleOrOptions
 end
 
-function Toast.Info(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Info(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("info", coerce(titleOrOptions, options))
 end
-function Toast.Success(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Success(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("success", coerce(titleOrOptions, options))
 end
-function Toast.Warning(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Warning(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("warning", coerce(titleOrOptions, options))
 end
-function Toast.Error(titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Error(titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show("error", coerce(titleOrOptions, options))
 end
-function Toast.Show(variant: ToastVariant, titleOrOptions: string | ToastOptions, options: ToastOptions?)
+function Toast.Show(variant: ToastVariant, titleOrOptions: string | ToastOptions, options: (string | ToastOptions)?)
 	return show(variant, coerce(titleOrOptions, options))
 end
 

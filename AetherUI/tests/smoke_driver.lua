@@ -154,7 +154,7 @@ end)
 
 check("Badge", function() AetherUI.Badge({ Text = "New", Variant = "Primary" }) end)
 check("Avatar", function() AetherUI.Avatar({ Name = "Mock Player" }) end)
-check("StatusDot", function() AetherUI.StatusDot({ Status = "Online" }) end)
+check("StatusIndicator", function() AetherUI.StatusIndicator({ Status = "Online" }) end)
 check("Progress.Bar", function() AetherUI.Progress.Bar({ Value = 0.5 }) end)
 check("Progress.Circular", function() AetherUI.Progress.Circular({ Value = 0.75 }) end)
 check("Skeleton", function() AetherUI.Skeleton({ Lines = 3 }) end)
@@ -197,8 +197,20 @@ end)
 
 check("Toast.Success", function() AetherUI.Toast.Success("Saved", "It worked") end)
 check("Toast.Error", function() AetherUI.Toast.Error("Oops", "It broke") end)
-check("Modal.Confirm", function()
-	AetherUI.Modal.Confirm({ Title = "Sure?", Body = "Really?", OnConfirm = function() end })
+check("Modal", function()
+	local modal = AetherUI.Modal({
+		Title = "Confirm action",
+		Description = "This cannot be undone.",
+		Variant = "danger",
+		Actions = {
+			{ Text = "Cancel", Variant = "ghost" },
+			{ Text = "Delete", Variant = "danger", OnClick = function() end },
+		},
+	})
+	if modal then
+		if typeof(modal.Open) == "function" then modal.Open() end
+		if typeof(modal.Close) == "function" then modal.Close() end
+	end
 end)
 check("Tooltip.Attach", function()
 	local target = AetherUI.Button({ Text = "Hover me" })

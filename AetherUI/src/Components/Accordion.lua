@@ -21,7 +21,8 @@ export type AccordionItem = {
 	Id: string,
 	Title: string,
 	Icon: string?,
-	Content: () -> Instance,
+	--- Builder function, ready Instance, or plain text body.
+	Content: (() -> Instance) | Instance | string | nil,
 	DefaultOpen: boolean?,
 }
 
@@ -75,8 +76,30 @@ local function Accordion(props: AccordionProps): Frame
 		end)
 		local hovered = Value(false)
 
-		-- content is mounted once, revealed via ClipsDescendants + size spring
-		local contentInstance = item.Content()
+		-- content is mounted once, revealed via ClipsDescendants + size spring.
+		-- `Content` may be a builder function, a ready Instance, or plain text.
+		local contentInstance: Instance
+		if typeof(item.Content) == "function" then
+			contentInstance = (item.Content :: any)()
+		elseif typeof(item.Content) == "Instance" then
+			contentInstance = item.Content :: any
+		else
+			contentInstance = New("TextLabel")({
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = Enum.AutomaticSize.Y,
+				BackgroundTransparency = 1,
+				Text = if typeof(item.Content) == "string"
+					then item.Content :: any
+					else ((item :: any).Body or ""),
+				TextWrapped = true,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				TextColor3 = Computed(function()
+					return theme:get().TextMuted
+				end),
+				TextSize = 13,
+				Font = Enum.Font.Gotham,
+			})
+		end
 		local contentHeight = Value(0)
 		if contentInstance:IsA("GuiObject") then
 			local function measure()
