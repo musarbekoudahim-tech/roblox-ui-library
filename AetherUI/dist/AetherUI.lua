@@ -3940,7 +3940,25 @@ end)
 
 __register("Core.Fusion", function(require)
 -- Vendored Fusion 0.2 (github.com/dphfox/Fusion, MIT) — bundled below.
-return require("Fusion")
+local Fusion = require("Fusion")
+
+local hasPeek = pcall(function()
+	return Fusion.peek
+end)
+if hasPeek then
+	return Fusion
+end
+
+local function peek(target)
+	if typeof(target) == "table" and typeof(target.get) == "function" then
+		return target:get(false)
+	end
+	return target
+end
+
+-- rawget finds `peek` on the proxy first; everything else falls through
+-- to the real Fusion exports (whose own strict guard still applies).
+return setmetatable({ peek = peek }, { __index = Fusion })
 
 end)
 
