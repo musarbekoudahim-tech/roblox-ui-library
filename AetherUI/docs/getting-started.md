@@ -5,23 +5,27 @@ AetherUI is a **standalone runtime library** — it never touches ReplicatedStor
 ## Requirements
 
 - A runtime environment with `loadstring` and `game:HttpGet` support
-- [Fusion 0.2+](https://elttob.uk/Fusion/) — bundled with the distributed script, or preloaded into `getgenv().Fusion` (the internal resolver picks it up automatically)
+- Nothing else — [Fusion 0.2](https://elttob.uk/Fusion/) is vendored inside the bundle
 
 ## Installation
 
 ### loadstring (recommended)
 
-The main script returns the full library table at the very end, so it initializes directly when called dynamically:
+The single-file bundle at `dist/AetherUI.lua` returns the full library table at the very end, so it initializes directly when called dynamically:
 
 ```lua
-local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-name/AetherUI/main/dist/AetherUI.lua"))()
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 ```
 
-### Manual
+### Building from source
 
-1. Download or clone this repository
-2. Bundle `src/` into a single file (or host the files raw and load `Init.lua`)
-3. Execute the script — it returns the `AetherUI` table
+If you change anything under `src/`, regenerate the bundle with Node.js:
+
+```bash
+node scripts/bundle.mjs   # -> dist/AetherUI.lua
+```
+
+The bundler merges `src/` and `vendor/Fusion` into one script, rewriting all `require(script.Parent...)` instance paths into an internal module registry. Host the output anywhere raw (GitHub, gist, your own server) and point the loadstring URL at it.
 
 ## Your first window
 

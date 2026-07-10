@@ -35,24 +35,26 @@ AetherUI is a **standalone runtime library**. It has zero dependencies on Replic
 
 ### loadstring (recommended)
 
-Load it dynamically from a raw URL — the library table is returned at the end of the script:
+The ready-to-use single-file bundle lives at [`dist/AetherUI.lua`](dist/AetherUI.lua) — **Fusion 0.2 is vendored inside**, so this one line is all you need:
 
 ```lua
-local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-name/AetherUI/main/dist/AetherUI.lua"))()
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 ```
 
-### Manual
+### Building the bundle yourself
 
-1. Download or clone this repository
-2. Bundle `src/` into a single file (or host the files and load `Init.lua`)
-3. Execute the script — it returns the `AetherUI` table
+`dist/AetherUI.lua` is generated from `src/` + `vendor/Fusion` by the included bundler (requires Node.js):
 
-> **Dependency:** AetherUI requires [Fusion 0.2+](https://elttob.uk/Fusion/). Bundle it alongside the library, or preload it into `getgenv().Fusion` before executing — the internal resolver picks it up automatically.
+```bash
+node scripts/bundle.mjs   # -> dist/AetherUI.lua
+```
+
+The bundler statically rewrites every `require(script.Parent...)` instance path into an internal module registry, wraps each module in a lazy closure, and ends the file with `return AetherUI` — producing one self-contained script that initializes directly via `loadstring(...)()`. The output is syntax-verified against the official Luau compiler. Re-run it after any change to `src/`.
 
 ## Quick Start
 
 ```lua
-local AetherUI = loadstring(game:HttpGet("URL"))()
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 
 -- Apply a theme
 AetherUI.Theme.Apply("Dark")
@@ -262,12 +264,18 @@ AetherUI.Sound.Play("Click")           -- Hover | Click | Success | Error | Togg
 
 ```
 AetherUI/
+├── dist/
+│   └── AetherUI.lua  # Single-file bundle — the loadstring target
 ├── src/
 │   ├── Core/         # Theme, Icons, Keybinds, Animation, Sound, Overlay, ...
 │   ├── Components/   # All 35+ components
 │   ├── Hooks/        # UseHover, UsePress, UseDrag
 │   ├── Types/        # Shared type definitions
-│   └── Init.lua      # Public API entry point
+│   └── Init.lua      # Public API entry point (returns the AetherUI table)
+├── vendor/
+│   └── Fusion/       # Vendored Fusion 0.2 (bundled into dist)
+├── scripts/
+│   └── bundle.mjs    # Bundler: src + vendor/Fusion -> dist/AetherUI.lua
 ├── examples/
 │   └── Showcase.lua  # Full component tour
 ├── docs/             # Extended documentation

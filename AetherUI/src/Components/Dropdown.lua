@@ -214,12 +214,11 @@ return function(props: { [string]: any }): Frame
 							Text = "",
 							AutoButtonColor = false,
 							BackgroundColor3 = Tween(
-								Computed(function()
-									return if rowHover:get() or isSelected:get()
-										then Theme.Colors.SurfaceHover:get()
-										else Theme.Colors.Elevated:get()
-									end
-								end),
+									Computed(function()
+										return if rowHover:get() or isSelected:get()
+											then Theme.Colors.SurfaceHover:get()
+											else Theme.Colors.Elevated:get()
+									end),
 								Animation.Presets.Fast
 							),
 							BackgroundTransparency = Computed(function()

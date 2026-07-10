@@ -10,7 +10,7 @@
 	Press RightShift to toggle the window, Ctrl+K for the command palette.
 ]]
 
-local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-name/AetherUI/main/dist/AetherUI.lua"))()
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 
 -- 1. Theme + global systems ---------------------------------------------------
 
