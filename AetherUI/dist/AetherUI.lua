@@ -3951,7 +3951,7 @@ end
 
 local function peek(target)
 	if typeof(target) == "table" and typeof(target.get) == "function" then
-		return target:get(false)
+		return target:get()
 	end
 	return target
 end
@@ -5026,6 +5026,7 @@ Themes.Dark = {
 		Background = Color3.fromRGB(9, 9, 12),
 		Surface = Color3.fromRGB(16, 16, 21),
 		SurfaceHover = Color3.fromRGB(24, 24, 30),
+		SurfaceHigh = Color3.fromRGB(30, 30, 38),
 		Elevated = Color3.fromRGB(22, 22, 28),
 		Overlay = Color3.fromRGB(0, 0, 0),
 		Border = Color3.fromRGB(48, 48, 58),
@@ -5036,6 +5037,7 @@ Themes.Dark = {
 		Secondary = Color3.fromRGB(34, 34, 42),
 		SecondaryHover = Color3.fromRGB(44, 44, 54),
 		Text = Color3.fromRGB(240, 240, 245),
+		TextDim = Color3.fromRGB(190, 190, 200),
 		TextMuted = Color3.fromRGB(148, 148, 160),
 		TextDisabled = Color3.fromRGB(95, 95, 106),
 		Success = Color3.fromRGB(74, 200, 128),
@@ -5061,6 +5063,7 @@ Themes.Light = {
 		Background = Color3.fromRGB(248, 248, 250),
 		Surface = Color3.fromRGB(255, 255, 255),
 		SurfaceHover = Color3.fromRGB(242, 242, 246),
+		SurfaceHigh = Color3.fromRGB(234, 234, 240),
 		Elevated = Color3.fromRGB(255, 255, 255),
 		Overlay = Color3.fromRGB(15, 15, 20),
 		Border = Color3.fromRGB(222, 222, 230),
@@ -5071,6 +5074,7 @@ Themes.Light = {
 		Secondary = Color3.fromRGB(238, 238, 243),
 		SecondaryHover = Color3.fromRGB(228, 228, 234),
 		Text = Color3.fromRGB(24, 24, 30),
+		TextDim = Color3.fromRGB(70, 70, 84),
 		TextMuted = Color3.fromRGB(108, 108, 122),
 		TextDisabled = Color3.fromRGB(168, 168, 178),
 		Success = Color3.fromRGB(34, 160, 92),
@@ -5096,6 +5100,7 @@ Themes.Amoled = {
 		Background = Color3.fromRGB(0, 0, 0),
 		Surface = Color3.fromRGB(8, 8, 10),
 		SurfaceHover = Color3.fromRGB(18, 18, 22),
+		SurfaceHigh = Color3.fromRGB(24, 24, 30),
 		Elevated = Color3.fromRGB(14, 14, 17),
 		Overlay = Color3.fromRGB(0, 0, 0),
 		Border = Color3.fromRGB(38, 38, 46),
@@ -5106,6 +5111,7 @@ Themes.Amoled = {
 		Secondary = Color3.fromRGB(24, 24, 30),
 		SecondaryHover = Color3.fromRGB(34, 34, 42),
 		Text = Color3.fromRGB(238, 238, 242),
+		TextDim = Color3.fromRGB(184, 184, 194),
 		TextMuted = Color3.fromRGB(138, 138, 150),
 		TextDisabled = Color3.fromRGB(84, 84, 94),
 		Success = Color3.fromRGB(74, 200, 128),
@@ -5131,6 +5137,7 @@ Themes.Midnight = {
 		Background = Color3.fromRGB(10, 12, 20),
 		Surface = Color3.fromRGB(16, 19, 31),
 		SurfaceHover = Color3.fromRGB(24, 28, 44),
+		SurfaceHigh = Color3.fromRGB(30, 35, 54),
 		Elevated = Color3.fromRGB(21, 25, 40),
 		Overlay = Color3.fromRGB(2, 3, 8),
 		Border = Color3.fromRGB(44, 50, 74),
@@ -5141,6 +5148,7 @@ Themes.Midnight = {
 		Secondary = Color3.fromRGB(30, 35, 54),
 		SecondaryHover = Color3.fromRGB(40, 46, 68),
 		Text = Color3.fromRGB(236, 240, 250),
+		TextDim = Color3.fromRGB(188, 196, 218),
 		TextMuted = Color3.fromRGB(140, 150, 178),
 		TextDisabled = Color3.fromRGB(92, 100, 124),
 		Success = Color3.fromRGB(84, 210, 148),
