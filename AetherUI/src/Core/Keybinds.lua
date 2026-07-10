@@ -218,4 +218,10 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	end
 end)
 
+--- Removes every registered keybind. Used by AetherUI.Destroy() on teardown.
+function Keybinds.DisconnectAll()
+	captureCallback = nil
+	table.clear(registry)
+end
+
 return Keybinds

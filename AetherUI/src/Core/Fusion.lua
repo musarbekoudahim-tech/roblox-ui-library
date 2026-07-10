@@ -51,4 +51,29 @@ local function resolve(): any
 	)
 end
 
-return resolve()
+--- Fusion 0.2 compatibility: `peek` was only added in Fusion 0.3, and 0.2's
+--- strict export table hard-errors when indexing unknown members. AetherUI
+--- uses `Fusion.peek` throughout, so when the resolved Fusion lacks it we
+--- wrap the exports in a proxy that adds a shim. In 0.2, `state:get(false)`
+--- reads a value WITHOUT registering a dependency — identical semantics.
+local function withCompat(fusion: any): any
+	local hasPeek = pcall(function()
+		return fusion.peek
+	end)
+	if hasPeek then
+		return fusion
+	end
+
+	local function peek(target: any): any
+		if typeof(target) == "table" and typeof(target.get) == "function" then
+			return target:get(false)
+		end
+		return target
+	end
+
+	-- rawget finds `peek` on the proxy first; everything else falls through
+	-- to the real Fusion exports (whose own strict guard still applies).
+	return setmetatable({ peek = peek }, { __index = fusion })
+end
+
+return withCompat(resolve())

@@ -55,10 +55,33 @@ function addTree(baseDir, prefix) {
 addTree(srcDir, "");
 addTree(fusionDir, "Fusion");
 
-// The runtime Fusion resolver is replaced by the vendored bundle.
+// The runtime Fusion resolver is replaced by the vendored bundle, PLUS a
+// compatibility shim: `peek` only exists in Fusion 0.3+, and 0.2's strict
+// export table hard-errors on unknown members. In 0.2, `state:get(false)`
+// reads a value WITHOUT registering a dependency — identical semantics.
 modules.set(
   "Core.Fusion",
-  `-- Vendored Fusion 0.2 (github.com/dphfox/Fusion, MIT) — bundled below.\nreturn require("Fusion")\n`
+  `-- Vendored Fusion 0.2 (github.com/dphfox/Fusion, MIT) — bundled below.
+local Fusion = require("Fusion")
+
+local hasPeek = pcall(function()
+	return Fusion.peek
+end)
+if hasPeek then
+	return Fusion
+end
+
+local function peek(target)
+	if typeof(target) == "table" and typeof(target.get) == "function" then
+		return target:get(false)
+	end
+	return target
+end
+
+-- rawget finds \`peek\` on the proxy first; everything else falls through
+-- to the real Fusion exports (whose own strict guard still applies).
+return setmetatable({ peek = peek }, { __index = Fusion })
+`
 );
 
 // ---------------------------------------------------------------------------

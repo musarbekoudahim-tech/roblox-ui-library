@@ -172,6 +172,50 @@ function Primitives.Icon(props: { [string]: any }): Instance
 	})
 end
 
+--[[
+	Themed elevated container: Surface background + rounded corner + hairline
+	stroke, with optional glassmorphism, drop shadow, and padding.
+	props: { Name?, Size?, AutomaticSize?, Padding? (number|table), Glass?,
+	Shadow?, LayoutOrder?, Parent?, ClipsDescendants?, [Children]? }
+]]
+function Primitives.Surface(props: { [any]: any }): Instance
+	local inner: { any } = {}
+
+	if props.Glass then
+		for _, deco in Primitives.Glass("Lg") do
+			table.insert(inner, deco)
+		end
+	else
+		table.insert(inner, Primitives.Corner("Lg"))
+		table.insert(inner, Primitives.Stroke(nil))
+	end
+
+	if props.Shadow then
+		table.insert(inner, Primitives.Shadow(nil))
+	end
+
+	if props.Padding ~= nil and props.Padding ~= 0 then
+		table.insert(inner, Primitives.Padding(props.Padding))
+	end
+
+	local extra = props[Children]
+	if extra ~= nil then
+		table.insert(inner, extra)
+	end
+
+	return New("Frame")({
+		Name = props.Name or "Surface",
+		Size = props.Size or UDim2.new(1, 0, 0, 0),
+		AutomaticSize = props.AutomaticSize,
+		BackgroundColor3 = Theme.Colors.Surface,
+		BackgroundTransparency = if props.Glass then Theme.GlassTransparency else 0,
+		LayoutOrder = props.LayoutOrder,
+		ClipsDescendants = props.ClipsDescendants,
+		Parent = props.Parent,
+		[Children] = inner,
+	})
+end
+
 --- Glassmorphism surface children: translucent fill + hairline stroke + top sheen.
 function Primitives.Glass(radius: any?): { Instance }
 	return {
