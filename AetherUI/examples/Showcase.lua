@@ -3,15 +3,14 @@
 	AetherUI — Showcase
 	===================
 	A complete tour of every AetherUI component, wired into a single window
-	with a sidebar. Drop this in a LocalScript under StarterPlayerScripts
-	(with AetherUI placed in ReplicatedStorage) and hit Play.
+	with a sidebar. Execute this as a standalone script — the library loads
+	dynamically and the UI is parented to CoreGui, so it persists across
+	respawns with no game project setup required.
 
 	Press RightShift to toggle the window, Ctrl+K for the command palette.
 ]]
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local AetherUI = require(ReplicatedStorage:WaitForChild("AetherUI"):WaitForChild("Init"))
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 
 -- 1. Theme + global systems ---------------------------------------------------
 

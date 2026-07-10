@@ -31,45 +31,30 @@ Built on [Fusion](https://elttob.uk/Fusion/) · Cinematic animations · Glassmor
 
 ## Installation
 
-### Wally (recommended)
+AetherUI is a **standalone runtime library**. It has zero dependencies on ReplicatedStorage, StarterPlayerScripts, or any local game project folders — the UI is parented to `CoreGui` (or the executor's hidden UI via `gethui()` when available), so it persists across respawns and is fully independent of the local character state.
 
-```toml
-[dependencies]
-AetherUI = "your-name/aetherui@1.0.0"
-```
+### loadstring (recommended)
 
-```bash
-wally install
-```
-
-### GitHub
-
-1. Download or clone this repository
-2. Place the `src` folder in `ReplicatedStorage` and rename it `AetherUI`
-3. Require it from a LocalScript:
+The ready-to-use single-file bundle lives at [`dist/AetherUI.lua`](dist/AetherUI.lua) — **Fusion 0.2 is vendored inside**, so this one line is all you need:
 
 ```lua
-local AetherUI = require(game.ReplicatedStorage.AetherUI.Init)
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 ```
 
-### Rojo
+### Building the bundle yourself
 
-Point your `default.project.json` at `src/`:
+`dist/AetherUI.lua` is generated from `src/` + `vendor/Fusion` by the included bundler (requires Node.js):
 
-```json
-{
-  "ReplicatedStorage": {
-    "AetherUI": { "$path": "src" }
-  }
-}
+```bash
+node scripts/bundle.mjs   # -> dist/AetherUI.lua
 ```
 
-> **Dependency:** AetherUI requires [Fusion 0.2+](https://elttob.uk/Fusion/). Place it as a sibling of AetherUI in ReplicatedStorage, or install it via Wally — the internal resolver finds it automatically.
+The bundler statically rewrites every `require(script.Parent...)` instance path into an internal module registry, wraps each module in a lazy closure, and ends the file with `return AetherUI` — producing one self-contained script that initializes directly via `loadstring(...)()`. The output is syntax-verified against the official Luau compiler. Re-run it after any change to `src/`.
 
 ## Quick Start
 
 ```lua
-local AetherUI = require(game.ReplicatedStorage.AetherUI.Init)
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/musarbekoudahim-tech/roblox-ui-library/main/AetherUI/dist/AetherUI.lua"))()
 
 -- Apply a theme
 AetherUI.Theme.Apply("Dark")
@@ -279,12 +264,18 @@ AetherUI.Sound.Play("Click")           -- Hover | Click | Success | Error | Togg
 
 ```
 AetherUI/
+├── dist/
+│   └── AetherUI.lua  # Single-file bundle — the loadstring target
 ├── src/
 │   ├── Core/         # Theme, Icons, Keybinds, Animation, Sound, Overlay, ...
 │   ├── Components/   # All 35+ components
 │   ├── Hooks/        # UseHover, UsePress, UseDrag
 │   ├── Types/        # Shared type definitions
-│   └── Init.lua      # Public API entry point
+│   └── Init.lua      # Public API entry point (returns the AetherUI table)
+├── vendor/
+│   └── Fusion/       # Vendored Fusion 0.2 (bundled into dist)
+├── scripts/
+│   └── bundle.mjs    # Bundler: src + vendor/Fusion -> dist/AetherUI.lua
 ├── examples/
 │   └── Showcase.lua  # Full component tour
 ├── docs/             # Extended documentation
