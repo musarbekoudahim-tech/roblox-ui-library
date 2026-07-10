@@ -133,4 +133,67 @@ function Icons.List(): { string }
 	return names
 end
 
+--[[
+	Renders an icon as an ImageLabel. Used by every component that accepts
+	an `Icon` prop.
+
+	`name` may be a plain string OR a Fusion state object (Value/Computed)
+	for reactive icon swapping. `props` supports: Name, Size, Position,
+	AnchorPoint, LayoutOrder, ZIndex, Rotation, Visible, Color (-> ImageColor3),
+	Transparency (-> ImageTransparency) — each either static or reactive.
+
+	Unknown icons render an empty (invisible) label so the UI never breaks.
+]]
+function Icons.render(name: any, props: any): Instance
+	local Fusion = require(script.Parent.Fusion) :: any
+	local New = Fusion.New
+	local Computed = Fusion.Computed
+
+	props = props or {}
+
+	local isReactive = typeof(name) == "table" and typeof(name.get) == "function"
+
+	local image: any
+	local rectOffset: any
+	local rectSize: any
+
+	if isReactive then
+		image = Computed(function()
+			local data = Icons.Get(name:get())
+			return if data then data.Id else ""
+		end)
+		rectOffset = Computed(function()
+			local data = Icons.Get(name:get())
+			return if data and data.ImageRectOffset then data.ImageRectOffset else Vector2.zero
+		end)
+		rectSize = Computed(function()
+			local data = Icons.Get(name:get())
+			return if data and data.ImageRectSize then data.ImageRectSize else Vector2.zero
+		end)
+	else
+		local data = Icons.Get(name)
+		image = if data then data.Id else ""
+		rectOffset = if data and data.ImageRectOffset then data.ImageRectOffset else Vector2.zero
+		rectSize = if data and data.ImageRectSize then data.ImageRectSize else Vector2.zero
+	end
+
+	return New("ImageLabel")({
+		Name = props.Name or "Icon",
+		Size = props.Size or UDim2.fromOffset(16, 16),
+		Position = props.Position,
+		AnchorPoint = props.AnchorPoint,
+		LayoutOrder = props.LayoutOrder,
+		ZIndex = props.ZIndex,
+		Rotation = props.Rotation,
+		Visible = props.Visible,
+		BackgroundTransparency = 1,
+		Image = image,
+		ImageRectOffset = rectOffset,
+		ImageRectSize = rectSize,
+		ImageColor3 = props.Color,
+		ImageTransparency = props.Transparency,
+		ScaleType = Enum.ScaleType.Fit,
+	})
+end
+
 return Icons

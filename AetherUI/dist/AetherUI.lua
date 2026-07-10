@@ -4098,6 +4098,69 @@ function Icons.List(): { string }
 	return names
 end
 
+--[[
+	Renders an icon as an ImageLabel. Used by every component that accepts
+	an `Icon` prop.
+
+	`name` may be a plain string OR a Fusion state object (Value/Computed)
+	for reactive icon swapping. `props` supports: Name, Size, Position,
+	AnchorPoint, LayoutOrder, ZIndex, Rotation, Visible, Color (-> ImageColor3),
+	Transparency (-> ImageTransparency) — each either static or reactive.
+
+	Unknown icons render an empty (invisible) label so the UI never breaks.
+]]
+function Icons.render(name: any, props: any): Instance
+	local Fusion = require("Core.Fusion") :: any
+	local New = Fusion.New
+	local Computed = Fusion.Computed
+
+	props = props or {}
+
+	local isReactive = typeof(name) == "table" and typeof(name.get) == "function"
+
+	local image: any
+	local rectOffset: any
+	local rectSize: any
+
+	if isReactive then
+		image = Computed(function()
+			local data = Icons.Get(name:get())
+			return if data then data.Id else ""
+		end)
+		rectOffset = Computed(function()
+			local data = Icons.Get(name:get())
+			return if data and data.ImageRectOffset then data.ImageRectOffset else Vector2.zero
+		end)
+		rectSize = Computed(function()
+			local data = Icons.Get(name:get())
+			return if data and data.ImageRectSize then data.ImageRectSize else Vector2.zero
+		end)
+	else
+		local data = Icons.Get(name)
+		image = if data then data.Id else ""
+		rectOffset = if data and data.ImageRectOffset then data.ImageRectOffset else Vector2.zero
+		rectSize = if data and data.ImageRectSize then data.ImageRectSize else Vector2.zero
+	end
+
+	return New("ImageLabel")({
+		Name = props.Name or "Icon",
+		Size = props.Size or UDim2.fromOffset(16, 16),
+		Position = props.Position,
+		AnchorPoint = props.AnchorPoint,
+		LayoutOrder = props.LayoutOrder,
+		ZIndex = props.ZIndex,
+		Rotation = props.Rotation,
+		Visible = props.Visible,
+		BackgroundTransparency = 1,
+		Image = image,
+		ImageRectOffset = rectOffset,
+		ImageRectSize = rectSize,
+		ImageColor3 = props.Color,
+		ImageTransparency = props.Transparency,
+		ScaleType = Enum.ScaleType.Fit,
+	})
+end
+
 return Icons
 
 end)
@@ -4322,6 +4385,12 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		end
 	end
 end)
+
+--- Removes every registered keybind. Used by AetherUI.Destroy() on teardown.
+function Keybinds.DisconnectAll()
+	captureCallback = nil
+	table.clear(registry)
+end
 
 return Keybinds
 
@@ -6624,7 +6693,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 	end
 
 	local hexText = Computed(function()
-		return Utils.toHex(Fusion.peek(color))
+		return Utils.ToHex(Fusion.peek(color))
 	end)
 
 	-- SV square ---------------------------------------------------------
@@ -6797,7 +6866,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 
 	hexBox.FocusLost:Connect(function(enterPressed)
 		if enterPressed then
-			local parsed = Utils.fromHex(hexBox.Text)
+			local parsed = Utils.FromHex(hexBox.Text)
 			if parsed then
 				setFromColor(parsed)
 				Sound.play("Success")
@@ -9816,6 +9885,50 @@ function Primitives.Icon(props: { [string]: any }): Instance
 				[Children] = { New("UICorner")({ CornerRadius = UDim.new(1, 0) }) },
 			}),
 		},
+	})
+end
+
+--[[
+	Themed elevated container: Surface background + rounded corner + hairline
+	stroke, with optional glassmorphism, drop shadow, and padding.
+	props: { Name?, Size?, AutomaticSize?, Padding? (number|table), Glass?,
+	Shadow?, LayoutOrder?, Parent?, ClipsDescendants?, [Children]? }
+]]
+function Primitives.Surface(props: { [any]: any }): Instance
+	local inner: { any } = {}
+
+	if props.Glass then
+		for _, deco in Primitives.Glass("Lg") do
+			table.insert(inner, deco)
+		end
+	else
+		table.insert(inner, Primitives.Corner("Lg"))
+		table.insert(inner, Primitives.Stroke(nil))
+	end
+
+	if props.Shadow then
+		table.insert(inner, Primitives.Shadow(nil))
+	end
+
+	if props.Padding ~= nil and props.Padding ~= 0 then
+		table.insert(inner, Primitives.Padding(props.Padding))
+	end
+
+	local extra = props[Children]
+	if extra ~= nil then
+		table.insert(inner, extra)
+	end
+
+	return New("Frame")({
+		Name = props.Name or "Surface",
+		Size = props.Size or UDim2.new(1, 0, 0, 0),
+		AutomaticSize = props.AutomaticSize,
+		BackgroundColor3 = Theme.Colors.Surface,
+		BackgroundTransparency = if props.Glass then Theme.GlassTransparency else 0,
+		LayoutOrder = props.LayoutOrder,
+		ClipsDescendants = props.ClipsDescendants,
+		Parent = props.Parent,
+		[Children] = inner,
 	})
 end
 

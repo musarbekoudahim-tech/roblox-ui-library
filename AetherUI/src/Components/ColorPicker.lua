@@ -74,7 +74,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 	end
 
 	local hexText = Computed(function()
-		return Utils.toHex(Fusion.peek(color))
+		return Utils.ToHex(Fusion.peek(color))
 	end)
 
 	-- SV square ---------------------------------------------------------
@@ -247,7 +247,7 @@ local function ColorPicker(props: ColorPickerProps): Frame
 
 	hexBox.FocusLost:Connect(function(enterPressed)
 		if enterPressed then
-			local parsed = Utils.fromHex(hexBox.Text)
+			local parsed = Utils.FromHex(hexBox.Text)
 			if parsed then
 				setFromColor(parsed)
 				Sound.play("Success")
