@@ -13361,10 +13361,49 @@ local function Window(props: WindowProps): WindowHandle
 	local theme = Theme.Current
 	local layer = Overlay.getLayer("Windows", 50)
 
+	--- Current usable viewport (safe-area) in pixels, with a sane fallback.
+	local function viewportSize(): Vector2
+		local camera = workspace.CurrentCamera
+		if camera and camera.ViewportSize.X > 0 then
+			return camera.ViewportSize
+		end
+		return Vector2.new(1280, 720)
+	end
+
+	--- Clamps a pixel size so the window always fits on screen (phones!).
+	local function clampToViewport(w: number, h: number): (number, number)
+		local vp = viewportSize()
+		local maxW = math.floor(vp.X * 0.92)
+		local maxH = math.floor(vp.Y * 0.88)
+		return math.min(w, maxW), math.min(h, maxH)
+	end
+
 	local visible = Value(false)
 	local position = Value(UDim2.fromScale(0.5, 0.5))
-	local size = Value(props.Size or UDim2.fromOffset(680, 460))
-	local minSize = props.MinSize or Vector2.new(420, 300)
+
+	local requested = props.Size or UDim2.fromOffset(680, 460)
+	local initialW, initialH = clampToViewport(requested.X.Offset, requested.Y.Offset)
+	local size = Value(UDim2.fromOffset(initialW, initialH))
+
+	-- The minimum can never exceed what fits on screen either.
+	local requestedMin = props.MinSize or Vector2.new(420, 300)
+	local minW, minH = clampToViewport(requestedMin.X, requestedMin.Y)
+	local minSize = Vector2.new(minW, minH)
+
+	-- Re-clamp when the viewport changes (rotation, resolution change).
+	do
+		local camera = workspace.CurrentCamera
+		if camera then
+			camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+				local current = Fusion.peek(size)
+				local w, h = clampToViewport(current.X.Offset, current.Y.Offset)
+				if w ~= current.X.Offset or h ~= current.Y.Offset then
+					size:set(UDim2.fromOffset(w, h))
+					position:set(UDim2.fromScale(0.5, 0.5))
+				end
+			end)
+		end
+	end
 
 	local windowFrame: Frame
 	local contentFrame: Frame
@@ -13447,12 +13486,10 @@ local function Window(props: WindowProps): WindowHandle
 					end, 1),
 					controlDot(Color3.fromRGB(255, 189, 46), "minus", hide, 2),
 					controlDot(Color3.fromRGB(40, 201, 64), "maximize-2", function()
-						local camera = workspace.CurrentCamera
-						if camera then
-							local vp = camera.ViewportSize
-							size:set(UDim2.fromOffset(math.floor(vp.X * 0.85), math.floor(vp.Y * 0.85)))
-							position:set(UDim2.fromScale(0.5, 0.5))
-						end
+						local vp = viewportSize()
+						local w, h = clampToViewport(math.floor(vp.X * 0.85), math.floor(vp.Y * 0.85))
+						size:set(UDim2.fromOffset(w, h))
+						position:set(UDim2.fromScale(0.5, 0.5))
 					end, 3),
 				},
 			}),
@@ -13597,9 +13634,10 @@ local function Window(props: WindowProps): WindowHandle
 			))
 		elseif resizing then
 			local delta = point - resizeStart
+			local w, h = clampToViewport(startSize.X + delta.X, startSize.Y + delta.Y)
 			size:set(UDim2.fromOffset(
-				math.max(minSize.X, startSize.X + delta.X),
-				math.max(minSize.Y, startSize.Y + delta.Y)
+				math.max(minSize.X, w),
+				math.max(minSize.Y, h)
 			))
 		end
 	end)
