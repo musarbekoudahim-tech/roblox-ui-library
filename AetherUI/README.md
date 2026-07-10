@@ -31,45 +31,28 @@ Built on [Fusion](https://elttob.uk/Fusion/) · Cinematic animations · Glassmor
 
 ## Installation
 
-### Wally (recommended)
+AetherUI is a **standalone runtime library**. It has zero dependencies on ReplicatedStorage, StarterPlayerScripts, or any local game project folders — the UI is parented to `CoreGui` (or the executor's hidden UI via `gethui()` when available), so it persists across respawns and is fully independent of the local character state.
 
-```toml
-[dependencies]
-AetherUI = "your-name/aetherui@1.0.0"
-```
+### loadstring (recommended)
 
-```bash
-wally install
-```
-
-### GitHub
-
-1. Download or clone this repository
-2. Place the `src` folder in `ReplicatedStorage` and rename it `AetherUI`
-3. Require it from a LocalScript:
+Load it dynamically from a raw URL — the library table is returned at the end of the script:
 
 ```lua
-local AetherUI = require(game.ReplicatedStorage.AetherUI.Init)
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-name/AetherUI/main/dist/AetherUI.lua"))()
 ```
 
-### Rojo
+### Manual
 
-Point your `default.project.json` at `src/`:
+1. Download or clone this repository
+2. Bundle `src/` into a single file (or host the files and load `Init.lua`)
+3. Execute the script — it returns the `AetherUI` table
 
-```json
-{
-  "ReplicatedStorage": {
-    "AetherUI": { "$path": "src" }
-  }
-}
-```
-
-> **Dependency:** AetherUI requires [Fusion 0.2+](https://elttob.uk/Fusion/). Place it as a sibling of AetherUI in ReplicatedStorage, or install it via Wally — the internal resolver finds it automatically.
+> **Dependency:** AetherUI requires [Fusion 0.2+](https://elttob.uk/Fusion/). Bundle it alongside the library, or preload it into `getgenv().Fusion` before executing — the internal resolver picks it up automatically.
 
 ## Quick Start
 
 ```lua
-local AetherUI = require(game.ReplicatedStorage.AetherUI.Init)
+local AetherUI = loadstring(game:HttpGet("URL"))()
 
 -- Apply a theme
 AetherUI.Theme.Apply("Dark")

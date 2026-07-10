@@ -1,37 +1,32 @@
 # Getting Started
 
+AetherUI is a **standalone runtime library** — it never touches ReplicatedStorage, StarterPlayerScripts, or any local game project folders. The UI container is parented to `game:GetService("CoreGui")` (preferring the executor's hidden UI via `gethui()` when available), so the interface persists across character respawns and is fully independent of the local player's state.
+
 ## Requirements
 
-- Roblox Studio (any recent version)
-- [Fusion 0.2+](https://elttob.uk/Fusion/) — placed in `ReplicatedStorage` as a sibling of AetherUI, or installed via Wally
+- A runtime environment with `loadstring` and `game:HttpGet` support
+- [Fusion 0.2+](https://elttob.uk/Fusion/) — bundled with the distributed script, or preloaded into `getgenv().Fusion` (the internal resolver picks it up automatically)
 
 ## Installation
 
+### loadstring (recommended)
+
+The main script returns the full library table at the very end, so it initializes directly when called dynamically:
+
+```lua
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-name/AetherUI/main/dist/AetherUI.lua"))()
+```
+
 ### Manual
 
-1. Copy the `src` folder into `ReplicatedStorage`
-2. Rename it to `AetherUI`
-3. Place Fusion next to it (`ReplicatedStorage.Fusion`)
-
-### Wally + Rojo
-
-```toml
-# wally.toml
-[dependencies]
-AetherUI = "your-name/aetherui@1.0.0"
-```
-
-```bash
-wally install
-rojo serve
-```
+1. Download or clone this repository
+2. Bundle `src/` into a single file (or host the files raw and load `Init.lua`)
+3. Execute the script — it returns the `AetherUI` table
 
 ## Your first window
 
 ```lua
--- StarterPlayerScripts/Main.client.lua
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local AetherUI = require(ReplicatedStorage.AetherUI.Init)
+local AetherUI = loadstring(game:HttpGet("URL"))()
 
 AetherUI.Theme.Apply("Dark")
 
