@@ -13371,18 +13371,28 @@ local function Window(props: WindowProps): WindowHandle
 	end
 
 	--- Clamps a pixel size so the window always fits on screen (phones!).
+	--- Also guards against degenerate (zero/negative) sizes.
 	local function clampToViewport(w: number, h: number): (number, number)
 		local vp = viewportSize()
 		local maxW = math.floor(vp.X * 0.92)
 		local maxH = math.floor(vp.Y * 0.88)
-		return math.min(w, maxW), math.min(h, maxH)
+		w = math.clamp(w, 120, maxW)
+		h = math.clamp(h, 100, maxH)
+		return w, h
+	end
+
+	--- Resolves a UDim2 (scale AND offset) into absolute pixels, so
+	--- scale-based sizes like UDim2.fromScale(0.9, 0.8) work correctly.
+	local function resolvePixels(udim: UDim2): (number, number)
+		local vp = viewportSize()
+		return math.floor(udim.X.Scale * vp.X + udim.X.Offset), math.floor(udim.Y.Scale * vp.Y + udim.Y.Offset)
 	end
 
 	local visible = Value(false)
 	local position = Value(UDim2.fromScale(0.5, 0.5))
 
 	local requested = props.Size or UDim2.fromOffset(680, 460)
-	local initialW, initialH = clampToViewport(requested.X.Offset, requested.Y.Offset)
+	local initialW, initialH = clampToViewport(resolvePixels(requested))
 	local size = Value(UDim2.fromOffset(initialW, initialH))
 
 	-- The minimum can never exceed what fits on screen either.
